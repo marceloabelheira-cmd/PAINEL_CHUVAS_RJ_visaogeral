@@ -32,6 +32,7 @@
   --g0:#1c2943; --obs:#4d6890; --lv1:#1f3566; --lv2:#4566b8; --lv3:#8fb0f5;
   --ok:#6fd39b; --ok-soft:#163a28; --warn:#f0c75a; --warn-soft:#3a2f10; --err:#ff8a9a; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45;margin:0}
 .wrap{max-width:1500px;margin:0 auto;padding-inline:16px;padding-block:0 40px;display:grid;gap:14px}
 h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:.01em}
@@ -71,6 +72,25 @@ button:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-v
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:2px}
 .kpi b{font:700 34px/1 var(--f-display);font-variant-numeric:tabular-nums}
 .kpi span{font-size:13px;color:var(--muted)}
+button.kpi{font:inherit;color:var(--fg);text-align:left;cursor:pointer;position:relative}
+button.kpi:hover,button.kpi[aria-expanded="true"]{border-color:var(--accent)}
+button.kpi[aria-expanded="true"]{box-shadow:inset 0 -3px 0 var(--orange)}
+.kpi em{font:600 12px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-style:normal}
+.drill{background:var(--panel);border:1px solid var(--accent);border-radius:10px;padding:14px;display:grid;gap:10px}
+.drill-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.drill-h h2{font-size:22px}
+.xbtn{border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:8px;padding:5px 10px;font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.dlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px}
+.drow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:7px 10px;cursor:pointer;font:inherit;color:var(--fg);text-align:left;width:100%}
+.drow:hover{border-color:var(--accent)}
+.drow .p{font:700 18px var(--f-display);color:var(--muted);text-align:center}
+.drow .mid{display:block;min-width:0}
+.drow .chip{margin-top:3px}
+.drow .n{display:block;font:600 17px/1.1 var(--f-display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drow .v{font:700 22px var(--f-display);font-variant-numeric:tabular-nums}
+.drow .bar{display:block;height:5px;border-radius:3px;background:var(--g0);margin-top:4px;overflow:hidden}
+.drow .bar i{display:block;height:100%;background:var(--orange)}
+.ritem .more{font:600 12px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .kpi.g3 b{color:var(--g3)} .kpi.g2 b{color:var(--g2)} .kpi.g1 b{color:#b88a00}
 :root[data-theme="dark"] .kpi.g1 b{color:var(--g1)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .kpi.g1 b{color:var(--g1)}}
@@ -234,6 +254,7 @@ fieldset.fld{border:0;padding:0;margin:0}
 
   <div id="vwPainel" style="display:grid;gap:14px">
   <section class="kpis" id="kpis"></section>
+  <section class="drill" id="drill" hidden aria-live="polite"></section>
 
   <section class="main">
     <div class="panel mapbox">
@@ -378,7 +399,8 @@ const CRITS=[
 const MINCRIT=5, BUMP=6;
 
 const VALID={"Petrópolis":{g:"g1"},"Niterói":{g:"g1"},"Carapebus":{g:"g1"},"Conceição de Macabu":{g:"g1"},
- "Sumidouro":{g:"g1"},"Rio das Ostras":{g:"g1"},"Macaé":{g:"g1"}};
+ "Sumidouro":{g:"g1"},"Rio das Ostras":{g:"g1"},"Macaé":{g:"g1"},
+ "Miracema":{g:"obs"},"Varre-Sai":{g:"obs"},"Tanguá":{g:"obs"},"São Francisco de Itabapoana":{g:"obs"}};
 const REDEC={"Niterói":"03 · Metropolitana","Tanguá":"03 · Metropolitana","Sumidouro":"07 · Serrana I","Petrópolis":"Serrana (nº a confirmar)",
  "Rio das Ostras":"09 · Litorânea / Baixada Litorânea","Macaé":"09 · Litorânea / Baixada Litorânea",
  "Carapebus":"10 · Norte Fluminense","Conceição de Macabu":"10 · Norte Fluminense","São Francisco de Itabapoana":"10 · Norte Fluminense",
@@ -437,6 +459,11 @@ const BASE=[
 ["Miracema",4,0,1,"Interditada temporariamente, já liberada"]
 ].map((r,i)=>({id:"b"+i,mun:r[0],c:r[1],t:r[2],q:r[3],d:r[4],ok:true}));
 
+(function(){const muns=[...new Set(BASE.map(r=>r.mun))];let k=BASE.length;
+  const add=(m,c,t)=>BASE.push({id:"b"+(k++),mun:m,c,t,q:1,d:"Peso de calibração (a detalhar)",ok:true});
+  muns.forEach(m=>{const has=c=>BASE.some(r=>r.mun===m&&r.c===c);
+    if(!has(0))add(m,0,0); if(!has(6))add(m,6,4); if(!has(8))add(m,8,0);});})();
+
 const LBL={"Macaé":[-16,5,"end"],"Rio das Ostras":[0,30,"middle"],"Conceição de Macabu":[-14,-12,"end"],"Carapebus":[16,5,"start"]};
 let SEL="Sumidouro",PUBLIC=false,MODE="real",TEST=[],DB=null,CANWRITE=true;
 const recs=()=>MODE==="real"?BASE:TEST;
@@ -469,7 +496,7 @@ const NS="http://www.w3.org/2000/svg",pathBy={};
 const gP=document.createElementNS(NS,"g"),gL=document.createElementNS(NS,"g");svg.append(gP,gL);
 const tip=document.getElementById("tip");let DATA=[];
 MUNIS.forEach(m=>{const p=document.createElementNS(NS,"path");p.setAttribute("d",m.d);gP.appendChild(p);pathBy[m.n]=p;
-  p.addEventListener("click",()=>{SEL=m.n;render()});
+  p.addEventListener("click",()=>goDetail(m.n));
   p.addEventListener("mousemove",e=>{const o=DATA.find(x=>x.mun===m.n);const box=svg.parentElement.getBoundingClientRect();
     tip.innerHTML=`<b style="font:600 16px var(--f-display)">${m.n}</b><br>`+(o?`<span class="chip ${o.g}">${GL[o.g]}</span> ${DATA.indexOf(o)+1}º no ranking · índice ${o.idx}/30`:`<span style="color:var(--muted)">Sem registro</span>`);
     tip.hidden=false;let x=e.clientX-box.left+14,y=e.clientY-box.top+14;if(x>box.width-260)x-=270;tip.style.left=x+"px";tip.style.top=y+"px"});
@@ -485,20 +512,44 @@ function render(){
     gL.insertAdjacentHTML("beforeend",`<circle class="rk" cx="${x}" cy="${y}" r="11"/><text class="rk" x="${x}" y="${y+4.5}" text-anchor="middle">${i+1}</text>`+(o.g!=="obs"?`<text x="${x+L[0]}" y="${y+L[1]}" text-anchor="${L[2]}">${esc(o.mun)}</text>`:""))});
   const c=g=>DATA.filter(o=>o.g===g).length;
   const tot=(cc,ts)=>recs().filter(r=>r.ok&&r.c===cc&&ts.includes(r.t)).reduce((a,r)=>a+r.q,0);
-  const K=[["",DATA.length,"municípios com ocorrências"],["g3",c("g3"),"grau 3 · muito alto"],["g2",c("g2"),"grau 2 · alto"],["g1",c("g1"),"grau 1 · moderado"],
-    ["",tot(9,[0]),"desalojados"],["",tot(9,[1]),"desabrigados · "+tot(9,[3])+" óbitos"]];
-  document.getElementById("kpis").innerHTML=K.map(k=>`<div class="kpi ${k[0]}"><b>${k[1]}</b><span>${k[2]}</span></div>`).join("");
+  const K=[["mun","",DATA.length,"municípios com ocorrências"],["g3","g3",c("g3"),"grau 3 · muito alto"],["g2","g2",c("g2"),"grau 2 · alto"],["g1","g1",c("g1"),"grau 1 · moderado"],
+    ["dh","",tot(9,[0]),"desalojados"],["db","",tot(9,[1]),"desabrigados · "+tot(9,[3])+" óbitos"]];
+  const kp=document.getElementById("kpis");
+  kp.innerHTML=K.map(k=>`<button type="button" class="kpi ${k[1]}" data-k="${k[0]}" aria-expanded="${DRILL===k[0]}" aria-controls="drill"><b>${k[2]}</b><span>${k[3]}</span><em>${DRILL===k[0]?"Fechar lista":"Ver lista ›"}</em></button>`).join("");
+  kp.querySelectorAll("button.kpi").forEach(b=>b.onclick=()=>{DRILL=DRILL===b.dataset.k?null:b.dataset.k;render()});
+  renderDrill();
   document.getElementById("rankN").textContent=`${DATA.length} municípios`;
   let last="",h="";
   DATA.forEach((o,i)=>{if(o.g!==last){h+=`<div class="rsep">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</div>`;last=o.g}
     h+=`<button class="ritem ${o.mun===SEL?"sel":""}" data-m="${esc(o.mun)}"><span class="pos">${i+1}</span>
     <span style="min-width:0"><span class="nm">${esc(o.mun)}</span><span class="rg">REDEC ${REDEC[o.mun]||"não informada"}</span><span class="ibar"><i style="width:${o.idx/30*100}%"></i></span></span>
-    <span class="rside"><span class="chip ${o.g}">${GL[o.g]}</span><small class="mono">índice ${o.idx}/30 · ${o.n}/10</small></span></button>`});
+    <span class="rside"><span class="chip ${o.g}">${GL[o.g]}</span><small class="mono">índice ${o.idx}/30 · ${o.n}/10</small><span class="more">Ver detalhes ›</span></span></button>`});
   const rk=document.getElementById("rank");rk.innerHTML=h||`<p class="empty">Nenhum registro confirmado ainda. Use a aba Registrar ocorrência.</p>`;
-  rk.querySelectorAll(".ritem").forEach(b=>b.onclick=()=>{SEL=b.dataset.m;render()});
+  rk.querySelectorAll(".ritem").forEach(b=>b.onclick=()=>goDetail(b.dataset.m));
   renderDetail();renderMatrix();renderBars();renderRedec();renderRegList();
 }
 
+let DRILL=null;
+function renderDrill(){
+  const el=document.getElementById("drill");if(!DRILL){el.hidden=true;return}
+  const per=(ts)=>DATA.map(o=>({o,v:recs().filter(r=>r.ok&&r.mun===o.mun&&r.c===9&&ts.includes(r.t)).reduce((a,r)=>a+r.q,0)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+  let title="",rows=[],empty="";
+  if(DRILL==="mun"){title="Municípios com ocorrências";rows=DATA.map(o=>({o,v:o.idx,u:"/30"}));empty="Nenhum município com ocorrência confirmada."}
+  else if(["g1","g2","g3"].includes(DRILL)){title=`Municípios em ${GL[DRILL].toLowerCase()} · ${GLL[DRILL]}`;rows=DATA.filter(o=>o.g===DRILL).map(o=>({o,v:o.idx,u:"/30"}));empty="Nenhum município neste grau."}
+  else if(DRILL==="dh"){title="Desalojados por município";rows=per([0]);empty="Nenhum desalojado registrado."}
+  else if(DRILL==="db"){title="Desabrigados por município";rows=per([1]);
+    const ob=per([3]);if(ob.length)title+=" · óbitos: "+ob.map(x=>x.o.mun+" ("+x.v+")").join(", ");empty="Nenhum desabrigado registrado."}
+  const mx=Math.max(...rows.map(x=>x.v),1);
+  el.innerHTML=`<div class="drill-h"><h2>${esc(title)}</h2><button type="button" class="xbtn" id="dClose">Fechar</button></div>
+    ${rows.length?`<div class="dlist">${rows.map(x=>`<button type="button" class="drow" data-m="${esc(x.o.mun)}"><span class="p">${DATA.indexOf(x.o)+1}</span>
+      <span class="mid"><span class="n">${esc(x.o.mun)}</span><span class="chip ${x.o.g}" style="font-size:11px;padding:1px 6px">${GL[x.o.g]}</span><span class="bar"><i style="width:${x.v/mx*100}%"></i></span></span>
+      <span class="v">${x.v}<small style="font-size:13px;color:var(--muted)">${x.u||""}</small></span></button>`).join("")}</div>`:`<p class="empty">${empty}</p>`}
+    <span class="lbl">Clique em um município para ver o detalhamento dos impactos</span>`;
+  el.hidden=false;
+  el.querySelector("#dClose").onclick=()=>{DRILL=null;render()};
+  el.querySelectorAll(".drow").forEach(b=>b.onclick=()=>goDetail(b.dataset.m));
+}
+function goDetail(m){SEL=m;render();document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"start"})}
 function renderDetail(){
   const el=document.getElementById("detail");const o=DATA.find(x=>x.mun===SEL);
   if(!o){el.innerHTML=`<div class="dhead"><h3>${esc(SEL)}</h3><span class="chip none">Sem registro</span></div><p style="color:var(--muted);margin:0">Nenhuma ocorrência confirmada para este município. Clique em um município do mapa ou do ranking.</p>`;return}
@@ -591,7 +642,7 @@ function setPressed(on,off){on.setAttribute("aria-pressed","true");off.setAttrib
 const vg=document.getElementById("vGestor"),vp=document.getElementById("vPublico"),er=document.getElementById("eReal"),et=document.getElementById("eTeste");
 vg.onclick=()=>{PUBLIC=false;setPressed(vg,vp);render()};
 vp.onclick=()=>{PUBLIC=true;setPressed(vp,vg);showTab("painel");render()};
-er.onclick=()=>{MODE="real";SEL="Sumidouro";setPressed(er,et);render()};
+er.onclick=()=>{MODE="real";DRILL=null;SEL="Sumidouro";setPressed(er,et);render()};
 et.onclick=()=>{MODE="teste";setPressed(et,er);const o=compute()[0];SEL=o?o.mun:"Rio de Janeiro";render()};
 const tP=document.getElementById("tPainel"),tF=document.getElementById("tForm");
 function showTab(t){document.getElementById("vwPainel").style.display=t==="painel"?"grid":"none";document.getElementById("vwForm").hidden=t!=="form";
