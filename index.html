@@ -233,7 +233,7 @@ fieldset.fld{border:0;padding:0;margin:0}
   <section class="sub">
     <div class="event">
       <h2 id="evTitle">Evento de 03/10/2026</h2>
-      <span class="lbl" id="evSub">Situação consolidada · atualizada em 04/10/2026</span>
+      <span class="lbl" id="evSub">Situação consolidada · atualizada em 05/10/2026</span>
     </div>
     <div class="controls">
       <div class="seg pub-hide" role="group" aria-label="Fonte dos dados">
@@ -322,7 +322,7 @@ fieldset.fld{border:0;padding:0;margin:0}
         <h3>Ordem dentro do mesmo grau</h3>
         <ul>
           <li>Pelo <b>índice de impacto</b>: soma dos pesos dos 10 critérios, de 0 a 30.</li>
-          <li>Empate: vence quem tem mais pontos de quantidade × peso.</li>
+          <li>Empate: vence quem tem mais critérios atingidos; persistindo, quem tem mais pontos de quantidade × peso.</li>
         </ul>
       </div>
     </div>
@@ -400,11 +400,11 @@ const MINCRIT=5, BUMP=6;
 
 const VALID={"Petrópolis":{g:"g1"},"Niterói":{g:"g1"},"Carapebus":{g:"g1"},"Conceição de Macabu":{g:"g1"},
  "Sumidouro":{g:"g1"},"Rio das Ostras":{g:"g1"},"Macaé":{g:"g1"},
- "Miracema":{g:"obs"},"Varre-Sai":{g:"obs"},"Tanguá":{g:"obs"},"São Francisco de Itabapoana":{g:"obs"}};
-const REDEC={"Niterói":"03 · Metropolitana","Tanguá":"03 · Metropolitana","Sumidouro":"07 · Serrana I","Petrópolis":"Serrana (nº a confirmar)",
+ "Miracema":{g:"obs"},"Varre-Sai":{g:"obs"},"Tanguá":{g:"obs"},"São Francisco de Itabapoana":{g:"obs"},"Rio de Janeiro":{g:"g1"}};
+const REDEC={"Niterói":"03 · Metropolitana","Tanguá":"03 · Metropolitana","Sumidouro":"07 · Serrana I","Petrópolis":"07 · Serrana I",
  "Rio das Ostras":"09 · Litorânea / Baixada Litorânea","Macaé":"09 · Litorânea / Baixada Litorânea",
  "Carapebus":"10 · Norte Fluminense","Conceição de Macabu":"10 · Norte Fluminense","São Francisco de Itabapoana":"10 · Norte Fluminense",
- "Varre-Sai":"11 · Noroeste","Miracema":"11 · Noroeste"};
+ "Varre-Sai":"11 · Noroeste","Miracema":"11 · Noroeste","Rio de Janeiro":"01"};
 const NOTES={
  "Sumidouro":"Ofício nº 294/GAB/2026 solicita apoio emergencial do Estado para recuperação e liberação das estradas, com retroescavadeiras, pás mecânicas/carregadeiras, caminhões basculantes e caminhão-pipa. Equipe SEDEC em vistoria técnica (VTR ARDC 037) com a Secretaria de Administração e a COMDEC.",
  "Rio das Ostras":"Chuvas intensas (COBRADE 1.3.2.1.4), início em 03/10 às 07h20. Abrigo: CIC (Rua Francisco de Mattos, s/nº, Nova Esperança). Fonte: DCM Rio das Ostras.",
@@ -413,7 +413,8 @@ const NOTES={
  "Conceição de Macabu":"Interdição total da ponte da Vila Barata (RJ-196) por risco estrutural. COMDEC avaliando.",
  "Petrópolis":"Chuva constante e volumosa ao longo do dia, envio de Cell Broadcast e repercussão na mídia.",
  "Miracema":"Atendimento: DCM Miracema e CBMERJ. Via já liberada.",
- "Varre-Sai":"Aguardando atuação da Enel."
+ "Varre-Sai":"Aguardando atuação da Enel.",
+ "Rio de Janeiro":"Informações recebidas em 05/10: chuva e vento, alerta por SMS, bolsões d'água em várias vias, via intransitável, queda de árvore e interação nos grupos operacionais e redes sociais."
 };
 
 // Evento 03/10: [município, critério(0-9), tipo, quantidade, detalhe]
@@ -456,7 +457,13 @@ const BASE=[
 ["Varre-Sai",5,0,1,"Poste inclinado"],
 ["Varre-Sai",4,0,1,"Estrada vicinal Santa Cruz 2, interdição parcial"],
 ["Miracema",2,2,1,"Estrada Miracema x Pádua"],
-["Miracema",4,0,1,"Interditada temporariamente, já liberada"]
+["Miracema",4,0,1,"Interditada temporariamente, já liberada"],
+["Rio de Janeiro",0,0,1,""],
+["Rio de Janeiro",6,0,1,""],
+["Rio de Janeiro",8,0,1,""],
+["Rio de Janeiro",4,0,1,"Via intransitável"],
+["Rio de Janeiro",2,0,1,""],
+["Rio de Janeiro",1,0,1,"Bolsões d'água em várias vias"]
 ].map((r,i)=>({id:"b"+i,mun:r[0],c:r[1],t:r[2],q:r[3],d:r[4],ok:true}));
 
 (function(){const muns=[...new Set(BASE.map(r=>r.mun))];let k=BASE.length;
@@ -480,7 +487,7 @@ function compute(){
     const v=MODE==="real"?VALID[o.mun]:null;o.g=v?v.g:o.auto;o.valid=!!v;
     o.dh=sumT(o.mun,9,[0]);o.db=sumT(o.mun,9,[1]);return o});
   const gr={g3:3,g2:2,g1:1,obs:0};
-  return list.sort((a,b)=>gr[b.g]-gr[a.g]||b.idx-a.idx||b.tp-a.tp);
+  return list.sort((a,b)=>gr[b.g]-gr[a.g]||b.idx-a.idx||b.n-a.n||b.tp-a.tp);
 }
 function sumT(m,c,ts){return recs().filter(r=>r.ok&&r.mun===m&&r.c===c&&ts.includes(r.t)).reduce((a,r)=>a+r.q,0)}
 const GL={g3:"Grau 3",g2:"Grau 2",g1:"Grau 1",obs:"Abaixo do grau 1",none:"Sem registro"};
@@ -505,7 +512,7 @@ MUNIS.forEach(m=>{const p=document.createElementNS(NS,"path");p.setAttribute("d"
 function render(){
   DATA=compute();document.body.classList.toggle("public",PUBLIC);
   document.getElementById("evTitle").textContent=MODE==="real"?"Evento de 03/10/2026":"Teste ao vivo do formulário";
-  document.getElementById("evSub").textContent=MODE==="real"?"Situação consolidada · atualizada em 04/10/2026":(DB?"Registros feitos na aba Registrar ocorrência · atualiza sozinho":"Registro indisponível nesta visualização");
+  document.getElementById("evSub").textContent=MODE==="real"?"Situação consolidada · atualizada em 05/10/2026":(DB?"Registros feitos na aba Registrar ocorrência · atualiza sozinho":"Registro indisponível nesta visualização");
   MUNIS.forEach(m=>{const o=DATA.find(x=>x.mun===m.n);pathBy[m.n].style.fill=col(o?o.g:"none");pathBy[m.n].classList.toggle("sel",m.n===SEL)});
   gL.innerHTML="";DATA.forEach((o,i)=>{const m=MUNIS.find(x=>x.n===o.mun);if(!m)return;const[x,y]=m.c;
     const L=(MODE==="real"&&LBL[o.mun])||[0,-16,"middle"];
