@@ -55,6 +55,19 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .nrsteps{display:flex;gap:4px}
 .nrsteps span{width:34px;height:34px;border-radius:6px;display:grid;place-items:center;font:700 15px var(--f-display);color:#fff;opacity:.28;border:2px solid transparent}
 .nrsteps span.on{opacity:1;border-color:#fff;color:#2b2200;transform:scale(1.08)}
+.nr{position:relative}
+.nrsteps button.on{all:unset;box-sizing:border-box;width:34px;height:34px;border-radius:6px;display:grid;place-items:center;font:700 15px var(--f-display);color:#2b2200;border:2px solid #fff;transform:scale(1.08);cursor:help;position:relative}
+.nrsteps button.on::after{content:"i";position:absolute;top:-7px;right:-7px;width:15px;height:15px;border-radius:50%;background:var(--orange);color:#fff;font:700 10px/15px var(--f-body);text-align:center}
+.nrsteps button.on:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+.nrtip{position:absolute;top:calc(100% + 10px);right:0;z-index:20;width:min(420px,calc(100vw - 32px));background:var(--panel);color:var(--fg);border:1px solid var(--line);border-top:4px solid var(--nr2);border-radius:10px;padding:14px 16px;box-shadow:0 14px 34px rgba(10,18,40,.35);font-size:14px;line-height:1.5;text-align:left}
+.nrtip::before{content:"";position:absolute;top:-11px;right:136px;border:7px solid transparent;border-bottom-color:var(--nr2)}
+.nrtip .h1{font:700 18px var(--f-display);letter-spacing:.04em;color:var(--g3)}
+.nrtip .h2{font:700 16px var(--f-display);letter-spacing:.04em;text-transform:uppercase}
+.nrtip .chg{font:700 20px var(--f-display);margin:4px 0 8px}
+.nrtip p{margin:0 0 8px}
+.nrtip p:last-child{margin:0}
+.nrtip .meta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px}
+.nrtip .meta b{font:700 15px var(--f-mono);color:var(--fg);letter-spacing:0;text-transform:none}
 
 .sub{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;padding-top:4px}
 .event{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
@@ -200,6 +213,14 @@ fieldset.fld{border:0;padding:0;margin:0}
 .primary:disabled{opacity:.5;cursor:not-allowed}
 .msg{font-size:14px;border-radius:8px;padding:8px 10px}
 .msg.ok{background:var(--ok-soft);color:var(--ok)} .msg.err{background:var(--warn-soft);color:var(--err)}
+.evbox{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:4px 6px 4px 10px}
+.evbox select{font:600 15px var(--f-display);color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.srcdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--obs)}
+.srcdot.on{background:var(--ok)} .srcdot.err{background:var(--g2)}
+.howto{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px}
+.links{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+a.primary{text-decoration:none;display:inline-block}
+a.sec{color:var(--accent);font-weight:600}
 .reglist{display:grid;gap:0;max-height:640px;overflow:auto}
 .ri{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);align-items:start}
 .ri b{font:600 16px var(--f-display)}
@@ -222,9 +243,18 @@ fieldset.fld{border:0;padding:0;margin:0}
         <p>Impactos por município segundo a Matriz ICR · SEDEC-RJ</p>
       </div>
     </div>
-    <div class="nr" role="img" aria-label="Nível de Resposta atual: NR 2, amarelo">
+    <div class="nr" aria-label="Nível de Resposta atual: NR 2, amarelo">
       <div class="now"><small>Nível de Resposta</small><b>NR 2</b></div>
       <div class="nrsteps" id="nrsteps"></div>
+      <div class="nrtip" id="nrtip" role="tooltip" hidden>
+        <div class="meta"><b>03/10/26 · 18:17</b><span>Grupo Info - Risco - Desastre - SEDEC RJ</span></div>
+        <div class="h1">🛑 ATENÇÃO!</div>
+        <div class="h2">Mudança de nível – Resposta da SEDEC</div>
+        <div class="chg">🟢 NR 1 ➡️ 🟡 NR 2</div>
+        <p>Boa noite!</p>
+        <p>Após análise dos indicadores disponíveis, verifica-se que os níveis de monitoramento Meteorológico, Hidrológico e de Deslizamentos apresentam, predominantemente, condições ALTAS e MUITO ALTAS.</p>
+        <p>Considerando também as ocorrências relacionadas às chuvas registradas no SISGEO e informadas pelas Regionais de Proteção e Defesa Civil, bem como a necessidade de apoio pontual do GRAC, fica deliberada, conforme o PLANCON 2025/2026 – Chuvas Intensas, a evolução do Nível de Resposta 1 (NR 1) para o NR 2.</p>
+      </div>
     </div>
   </div>
 </header>
@@ -236,10 +266,8 @@ fieldset.fld{border:0;padding:0;margin:0}
       <span class="lbl" id="evSub">Situação consolidada · atualizada em 05/10/2026</span>
     </div>
     <div class="controls">
-      <div class="seg pub-hide" role="group" aria-label="Fonte dos dados">
-        <button id="eReal" aria-pressed="true">03/10 consolidado</button>
-        <button id="eTeste" aria-pressed="false">Teste ao vivo</button>
-      </div>
+      <div class="evbox"><label class="lbl" for="evSel">Evento</label><select id="evSel"></select>
+        <button type="button" class="xbtn pub-hide" id="btnAtual" title="Ler a planilha de novo">Atualizar</button></div>
       <div class="seg" role="group" aria-label="Versão do painel">
         <button id="vGestor" aria-pressed="true">Gestor</button>
         <button id="vPublico" aria-pressed="false">Público</button>
@@ -330,55 +358,26 @@ fieldset.fld{border:0;padding:0;margin:0}
   </div>
 
   <div id="vwForm" class="formgrid" hidden>
-    <section class="panel">
-      <div class="panel-h"><h2>Registrar ocorrência</h2><span class="lbl">Entra no modo "Teste ao vivo"</span></div>
-      <form class="reg" id="regForm" novalidate>
-        <div class="fld">
-          <label for="fMun">Município</label>
-          <input id="fMun" list="munList" autocomplete="off" placeholder="Digite o nome do município">
-          <datalist id="munList"></datalist>
-        </div>
-        <div class="fld">
-          <label for="fCrit">Critério da Matriz ICR</label>
-          <select id="fCrit"></select>
-        </div>
-        <div class="row2">
-          <div class="fld">
-            <label for="fTipo">Tipo de ocorrência <span class="peso" id="fPeso"></span></label>
-            <select id="fTipo"></select>
-          </div>
-          <div class="fld">
-            <label for="fQtd">Quantidade</label>
-            <input id="fQtd" type="number" min="1" step="1" value="1" inputmode="numeric">
-          </div>
-        </div>
-        <div class="fld">
-          <label for="fDet">Detalhe</label>
-          <textarea id="fDet" placeholder="Ex.: Estrada Arrozal x Campinas interditada por barreira"></textarea>
-        </div>
-        <div class="fld">
-          <label for="fFonte">Fonte</label>
-          <input id="fFonte" placeholder="Ex.: COMDEC, REDEC 07, SEDEC">
-        </div>
-        <fieldset class="fld">
-          <legend>Status</legend>
-          <div class="radios">
-            <label><input type="radio" name="fSt" id="fStC" value="confirmado" checked> Confirmado</label>
-            <label><input type="radio" name="fSt" id="fStR" value="recebido"> Aguardando confirmação</label>
-          </div>
-          <span class="hint">Só registros confirmados entram no cálculo do grau.</span>
-        </fieldset>
-        <button class="primary" type="submit" id="fSend">Registrar</button>
-        <div class="msg" id="fMsg" hidden></div>
-      </form>
+    <section class="panel" style="display:grid;gap:12px">
+      <div class="panel-h" style="margin:0"><h2>Registrar ocorrência</h2><span class="lbl">Google Forms + Google Sheets</span></div>
+      <p style="margin:0">Cada ocorrência é registrada no formulário e cai na aba <b>Registros</b> da planilha. O painel lê a planilha a cada minuto e recalcula o grau e o ranking.</p>
+      <div class="links">
+        <a class="primary" id="lnkForm" href="#" target="_blank" rel="noopener">Abrir formulário</a>
+        <a class="sec" id="lnkSheet" href="#" target="_blank" rel="noopener">Abrir planilha</a>
+      </div>
+      <p class="msg err" id="formMissing" hidden>O link do formulário ainda não foi configurado neste painel. Enquanto isso, registre direto na aba Registros da planilha.</p>
+      <ol class="howto">
+        <li>No formulário, escolha o evento, o município e o critério. Em seguida aparecem só os tipos de ocorrência daquele critério, já com o peso.</li>
+        <li>Quem preferir pode digitar direto na aba <b>Registros</b>. As colunas têm listas suspensas e o peso é preenchido sozinho.</li>
+        <li>Só entram no cálculo os registros com Status <b>Confirmado</b>. Para confirmar, mude o Status na planilha.</li>
+        <li>O grau validado pela equipe fica na aba <b>Validação</b>. Os pesos de cada tipo ficam na aba <b>Pesos</b>.</li>
+      </ol>
     </section>
     <section class="panel">
-      <div class="panel-h"><h2>Registros do teste</h2><span class="lbl" id="regN"></span></div>
+      <div class="panel-h"><h2>Aguardando confirmação</h2><span class="lbl" id="regN"></span></div>
       <div class="reglist" id="regList"></div>
     </section>
-  </div>
-
-  <p class="foot">Fontes: COMDECs, REDECs e SEDEC-RJ · Limites municipais: IBGE · Classificação segundo a Matriz ICR (Identificação, Classificação e Registro)</p>
+Fontes: COMDECs, REDECs e SEDEC-RJ · Limites municipais: IBGE · Classificação segundo a Matriz ICR (Identificação, Classificação e Registro)</p>
 </div>
 
 <script>
@@ -472,19 +471,24 @@ const BASE=[
     if(!has(0))add(m,0,0); if(!has(6))add(m,6,4); if(!has(8))add(m,8,0);});})();
 
 const LBL={"Macaé":[-16,5,"end"],"Rio das Ostras":[0,30,"middle"],"Conceição de Macabu":[-14,-12,"end"],"Carapebus":[16,5,"start"]};
-let SEL="Sumidouro",PUBLIC=false,MODE="real",TEST=[],DB=null,CANWRITE=true;
-const recs=()=>MODE==="real"?BASE:TEST;
+const SHEET_ID="1kDGNk6mQns15oc54Hv-5UYsmXu1iNsczDdS4Zq1w2Ks";
+const SHEET_URL="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/edit";
+const FORM_URL="https://docs.google.com/forms/d/1eDrK8Bqld0GtqSVdjbHgTxlQE8HtJ-jsvxCZExVRAjc/viewform";
+const EV_BASE="03/10/2026";
+BASE.forEach(r=>{r.tl=CRITS[r.c].t[r.t][0];r.w=CRITS[r.c].t[r.t][1];r.ev=EV_BASE});
+let SEL="Sumidouro",PUBLIC=false,ALL=BASE.slice(),EV=EV_BASE,SRC="embutido",SRCMSG="Conectando à planilha…",LIDO=null,VALS={[EV_BASE]:VALID},RED={};
+const recs=()=>ALL.filter(r=>r.ev===EV);
 
 function compute(){
   const by={};
-  recs().forEach(r=>{if(!r.ok)return;const cr=CRITS[r.c];if(!cr||!cr.t[r.t])return;
+  recs().forEach(r=>{if(!r.ok)return;const cr=CRITS[r.c];if(!cr)return;
     const o=by[r.mun]||(by[r.mun]={mun:r.mun,pts:Array(10).fill(0),mw:Array(10).fill(0),rows:Array.from({length:10},()=>[])});
-    const w=cr.t[r.t][1];o.pts[r.c]+=r.q*w;o.mw[r.c]=Math.max(o.mw[r.c],w);o.rows[r.c].push(r)});
+    const w=r.w;o.pts[r.c]+=r.q*w;o.mw[r.c]=Math.max(o.mw[r.c],w);o.rows[r.c].push(r)});
   const list=Object.values(by).map(o=>{
     o.lv=o.mw.map((w,j)=>w===0?0:Math.min(3,w+(o.pts[j]>=BUMP?1:0)));
     o.n=o.lv.filter(x=>x>0).length;o.idx=o.lv.reduce((a,b)=>a+b,0);o.tp=o.pts.reduce((a,b)=>a+b,0);
     o.auto=o.n<MINCRIT?"obs":o.idx<=15?"g1":o.idx<=22?"g2":"g3";
-    const v=MODE==="real"?VALID[o.mun]:null;o.g=v?v.g:o.auto;o.valid=!!v;
+    const v=(VALS[EV]||{})[o.mun];o.g=v?v.g:o.auto;o.valid=!!v;
     o.dh=sumT(o.mun,9,[0]);o.db=sumT(o.mun,9,[1]);return o});
   const gr={g3:3,g2:2,g1:1,obs:0};
   return list.sort((a,b)=>gr[b.g]-gr[a.g]||b.idx-a.idx||b.n-a.n||b.tp-a.tp);
@@ -496,7 +500,19 @@ const col=g=>`var(--${g==="none"?"g0":g})`;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 const NRC=["--nr1","--nr2","--nr3","--nr4","--nr5"],NR_ATUAL=2;
-document.getElementById("nrsteps").innerHTML=NRC.map((c,i)=>`<span class="${i+1===NR_ATUAL?"on":""}" style="background:var(${c})">${i+1}</span>`).join("");
+document.getElementById("nrsteps").innerHTML=NRC.map((c,i)=>i+1===NR_ATUAL
+  ?`<button type="button" class="on" id="nrBtn" style="background:var(${c})" aria-describedby="nrtip" aria-expanded="false" aria-label="NR ${i+1}: ver comunicado de mudança de nível">${i+1}</button>`
+  :`<span style="background:var(${c})">${i+1}</span>`).join("");
+(function(){const b=document.getElementById("nrBtn"),t=document.getElementById("nrtip");let pinned=false;
+  const show=v=>{t.hidden=!v;b.setAttribute("aria-expanded",v)};
+  b.addEventListener("mouseenter",()=>show(true));
+  b.addEventListener("mouseleave",()=>{if(!pinned)show(false)});
+  b.addEventListener("focus",()=>show(true));
+  b.addEventListener("blur",()=>{if(!pinned)show(false)});
+  b.addEventListener("click",e=>{e.stopPropagation();pinned=!pinned;show(pinned)});
+  t.addEventListener("click",e=>e.stopPropagation());
+  document.addEventListener("click",()=>{if(pinned){pinned=false;show(false)}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){pinned=false;show(false)}});})();
 
 const svg=document.getElementById("map");svg.setAttribute("viewBox",`0 0 ${MAP_W} ${MAP_H}`);
 const NS="http://www.w3.org/2000/svg",pathBy={};
@@ -511,11 +527,12 @@ MUNIS.forEach(m=>{const p=document.createElementNS(NS,"path");p.setAttribute("d"
 
 function render(){
   DATA=compute();document.body.classList.toggle("public",PUBLIC);
-  document.getElementById("evTitle").textContent=MODE==="real"?"Evento de 03/10/2026":"Teste ao vivo do formulário";
-  document.getElementById("evSub").textContent=MODE==="real"?"Situação consolidada · atualizada em 05/10/2026":(DB?"Registros feitos na aba Registrar ocorrência · atualiza sozinho":"Registro indisponível nesta visualização");
+  document.getElementById("evTitle").textContent="Evento de "+EV;
+  document.getElementById("evSub").innerHTML=`<span class="srcdot ${SRC==="planilha"?"on":SRCMSG.startsWith("Conectando")?"":"err"}"></span>`+esc(SRC==="planilha"?`Planilha Google · lida às ${LIDO} · atualiza a cada minuto`:SRCMSG);
+  renderEvSel();
   MUNIS.forEach(m=>{const o=DATA.find(x=>x.mun===m.n);pathBy[m.n].style.fill=col(o?o.g:"none");pathBy[m.n].classList.toggle("sel",m.n===SEL)});
   gL.innerHTML="";DATA.forEach((o,i)=>{const m=MUNIS.find(x=>x.n===o.mun);if(!m)return;const[x,y]=m.c;
-    const L=(MODE==="real"&&LBL[o.mun])||[0,-16,"middle"];
+    const L=(EV===EV_BASE&&LBL[o.mun])||[0,-16,"middle"];
     gL.insertAdjacentHTML("beforeend",`<circle class="rk" cx="${x}" cy="${y}" r="11"/><text class="rk" x="${x}" y="${y+4.5}" text-anchor="middle">${i+1}</text>`+(o.g!=="obs"?`<text x="${x+L[0]}" y="${y+L[1]}" text-anchor="${L[2]}">${esc(o.mun)}</text>`:""))});
   const c=g=>DATA.filter(o=>o.g===g).length;
   const tot=(cc,ts)=>recs().filter(r=>r.ok&&r.c===cc&&ts.includes(r.t)).reduce((a,r)=>a+r.q,0);
@@ -529,7 +546,7 @@ function render(){
   let last="",h="";
   DATA.forEach((o,i)=>{if(o.g!==last){h+=`<div class="rsep">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</div>`;last=o.g}
     h+=`<button class="ritem ${o.mun===SEL?"sel":""}" data-m="${esc(o.mun)}"><span class="pos">${i+1}</span>
-    <span style="min-width:0"><span class="nm">${esc(o.mun)}</span><span class="rg">REDEC ${REDEC[o.mun]||"não informada"}</span><span class="ibar"><i style="width:${o.idx/30*100}%"></i></span></span>
+    <span style="min-width:0"><span class="nm">${esc(o.mun)}</span><span class="rg">REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><span class="ibar"><i style="width:${o.idx/30*100}%"></i></span></span>
     <span class="rside"><span class="chip ${o.g}">${GL[o.g]}</span><small class="mono">índice ${o.idx}/30 · ${o.n}/10</small><span class="more">Ver detalhes ›</span></span></button>`});
   const rk=document.getElementById("rank");rk.innerHTML=h||`<p class="empty">Nenhum registro confirmado ainda. Use a aba Registrar ocorrência.</p>`;
   rk.querySelectorAll(".ritem").forEach(b=>b.onclick=()=>goDetail(b.dataset.m));
@@ -560,8 +577,8 @@ function goDetail(m){SEL=m;render();document.getElementById("detail").scrollInto
 function renderDetail(){
   const el=document.getElementById("detail");const o=DATA.find(x=>x.mun===SEL);
   if(!o){el.innerHTML=`<div class="dhead"><h3>${esc(SEL)}</h3><span class="chip none">Sem registro</span></div><p style="color:var(--muted);margin:0">Nenhuma ocorrência confirmada para este município. Clique em um município do mapa ou do ranking.</p>`;return}
-  const pos=DATA.indexOf(o)+1,note=MODE==="real"?NOTES[o.mun]:"";
-  el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º mais impactado · REDEC ${REDEC[o.mun]||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
+  const pos=DATA.indexOf(o)+1,note=EV===EV_BASE?NOTES[o.mun]:"";
+  el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º mais impactado · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
     <div class="dmeta"><span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span>
     <span class="chip ghost pub-hide">${o.valid?"Validado na Matriz ICR":"Sugestão automática"}</span></div></div>
     <div class="nums"><div><b>${o.idx}/30</b><span>índice de impacto</span></div><div><b>${o.n}/10</b><span>critérios atingidos</span></div>
@@ -570,7 +587,7 @@ function renderDetail(){
     <div class="crits">${CRITS.map((cr,j)=>{const rows=o.rows[j];return `<div class="crit ${o.lv[j]?"":"off"}">
       <div class="ct"><span>${cr.n}</span><span class="mono" style="font-size:13px">${o.lv[j]?"peso "+o.lv[j]:"—"}</span></div>
       <div class="lvbar">${[1,2,3].map(n=>`<i class="${o.lv[j]>=n?"on"+o.lv[j]:""}"></i>`).join("")}</div>
-      ${rows.length?`<ul>${rows.map(r=>`<li>${r.q>1?r.q+" × ":""}${cr.t[r.t][0]}${r.d?` <span class="pub-hide">· ${esc(r.d)}</span>`:""}</li>`).join("")}</ul>`:""}</div>`}).join("")}</div>
+      ${rows.length?`<ul>${rows.map(r=>`<li>${r.q>1?r.q+" × ":""}${esc(r.tl)}${r.d?` <span class="pub-hide">· ${esc(r.d)}</span>`:""}</li>`).join("")}</ul>`:""}</div>`}).join("")}</div>
     <div class="axr pub-hide"><span class="lbl">Matriz AxR · atividades ligadas</span>${CRITS.filter((c,j)=>o.lv[j]).map(c=>`<button type="button" title="Em breve: abrir esta atividade na Matriz AxR">${c.axr}</button>`).join("")}</div>`;
 }
 
@@ -588,90 +605,118 @@ function renderBars(){
 }
 
 function renderRedec(){
-  const groups={};DATA.forEach(o=>{const k=REDEC[o.mun]||"não informada";(groups[k]=groups[k]||[]).push(o)});
+  const groups={};DATA.forEach(o=>{const k=(RED[o.mun]||REDEC[o.mun])||"não informada";(groups[k]=groups[k]||[]).push(o)});
   const keys=Object.keys(groups).sort();
   document.getElementById("redecN").textContent=`${keys.length} regiões`;
   document.getElementById("redecs").innerHTML=keys.map(k=>`<div class="rd"><h3>REDEC ${k}</h3><ul>${groups[k].map(o=>{
-    const it=recs().filter(r=>r.ok&&r.mun===o.mun).map(r=>`${r.q>1?r.q+" × ":""}${CRITS[r.c].t[r.t][0].toLowerCase()}`).join(" · ");
+    const it=recs().filter(r=>r.ok&&r.mun===o.mun).map(r=>`${r.q>1?r.q+" × ":""}${r.tl.toLowerCase()}`).join(" · ");
     return `<li><b data-m="${esc(o.mun)}">${esc(o.mun)}</b> <span class="chip ${o.g}" style="font-size:11px;padding:1px 6px">${GL[o.g]}</span><p>${esc(it)}</p></li>`}).join("")}</ul></div>`).join("")||`<p class="empty">Sem registros.</p>`;
   document.querySelectorAll(".rd b[data-m]").forEach(b=>b.onclick=()=>{SEL=b.dataset.m;render();document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"nearest"})});
 }
 
-// ---- formulário ----
-const fMun=document.getElementById("fMun"),fCrit=document.getElementById("fCrit"),fTipo=document.getElementById("fTipo"),
-  fQtd=document.getElementById("fQtd"),fDet=document.getElementById("fDet"),fFonte=document.getElementById("fFonte"),
-  fSend=document.getElementById("fSend"),fMsg=document.getElementById("fMsg"),fPeso=document.getElementById("fPeso");
-document.getElementById("munList").innerHTML=MUNIS.map(m=>m.n).sort((a,b)=>a.localeCompare(b,"pt")).map(n=>`<option value="${n}"></option>`).join("");
-fCrit.innerHTML=CRITS.map((c,i)=>`<option value="${i}">${c.n}</option>`).join("");
-function fillTipos(){const c=CRITS[+fCrit.value];fTipo.innerHTML=c.t.map((t,i)=>`<option value="${i}">${t[0]} (peso ${t[1]})</option>`).join("");showPeso()}
-function showPeso(){const w=CRITS[+fCrit.value].t[+fTipo.value][1];fPeso.innerHTML=[1,2,3].map(n=>`<i class="${n<=w?"on":""}"></i>`).join("");fPeso.title="Peso "+w}
-fCrit.onchange=fillTipos;fTipo.onchange=showPeso;fillTipos();
-function say(t,ok){fMsg.textContent=t;fMsg.className="msg "+(ok?"ok":"err");fMsg.hidden=false}
-
-document.getElementById("regForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const mun=MUNIS.find(m=>m.n.toLowerCase()===fMun.value.trim().toLowerCase());
-  if(!mun){say("Escolha um município da lista do RJ.",false);fMun.focus();return}
-  const q=parseInt(fQtd.value,10);if(!(q>=1)){say("Informe uma quantidade de 1 ou mais.",false);fQtd.focus();return}
-  if(!DB){say("Não foi possível salvar: o armazenamento não está disponível nesta visualização. Abra o painel pelo link do Claude.",false);return}
-  const doc={mun:mun.n,c:+fCrit.value,t:+fTipo.value,q,d:fDet.value.trim().slice(0,500),fonte:fFonte.value.trim().slice(0,120),
-    status:document.getElementById("fStC").checked?"confirmado":"recebido",ts:Date.now()};
-  fSend.disabled=true;
-  try{await DB.collection("registros").add(doc);say(`Registrado: ${doc.mun} · ${CRITS[doc.c].t[doc.t][0]}.`,true);
-    fDet.value="";fQtd.value=1;SEL=doc.mun}
-  catch(err){say(err&&err.code==="quota_exceeded"?"O limite de registros do teste foi atingido. Exclua registros antigos.":"Não foi possível salvar o registro. Verifique se você tem permissão de edição e tente de novo.",false)}
-  finally{fSend.disabled=false}
-});
-
-let PENDDEL=null;
+// ---- aba Registrar ocorrência ----
+document.getElementById("lnkSheet").href=SHEET_URL;
+(function(){const a=document.getElementById("lnkForm");if(FORM_URL){a.href=FORM_URL}else{a.removeAttribute("href");a.setAttribute("aria-disabled","true");a.style.opacity=".45";document.getElementById("formMissing").hidden=false}})();
 function renderRegList(){
   const el=document.getElementById("regList");
-  document.getElementById("regN").textContent=`${TEST.length} registros`;
-  if(!DB){el.innerHTML=`<p class="empty">O registro de ocorrências funciona quando o painel é aberto pelo link do Claude. No arquivo HTML enviado por e-mail ele fica desativado.</p>`;return}
-  const list=[...TEST].sort((a,b)=>b.ts-a.ts);
-  el.innerHTML=list.map(r=>{const cr=CRITS[r.c],tp=cr&&cr.t[r.t];if(!tp)return"";
-    const hh=new Date(r.ts).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
-    return `<div class="ri"><div><b>${esc(r.mun)}</b><span class="st ${r.ok?"c":"r"}">${r.ok?"confirmado":"aguardando"}</span>
-      <p>${r.q>1?r.q+" × ":""}${tp[0]} (peso ${tp[1]}) · ${cr.n}${r.d?"<br>"+esc(r.d):""}<br><span class="mono">${hh}</span>${r.fonte?" · "+esc(r.fonte):""}</p></div>
-      <div class="ract">${CANWRITE?(r.ok?"":`<button data-a="ok" data-id="${r.id}">Confirmar</button>`)+
-        (PENDDEL===r.id?`<button class="danger" data-a="del2" data-id="${r.id}">Excluir mesmo</button><button data-a="nodel">Cancelar</button>`:`<button data-a="del" data-id="${r.id}">Excluir</button>`):""}</div></div>`}).join("")||`<p class="empty">Nenhum registro ainda. Preencha o formulário ao lado e confira o resultado na aba Painel, no modo Teste ao vivo.</p>`;
-  el.querySelectorAll("button[data-a]").forEach(b=>b.onclick=async()=>{const a=b.dataset.a,id=b.dataset.id;
-    try{
-      if(a==="ok")await DB.doc("registros/"+id).update({status:"confirmado"});
-      if(a==="del"){PENDDEL=id;renderRegList()}
-      if(a==="nodel"){PENDDEL=null;renderRegList()}
-      if(a==="del2"){PENDDEL=null;await DB.doc("registros/"+id).delete()}
-    }catch(err){say("Não foi possível alterar o registro.",false)}});
+  const list=recs().filter(r=>!r.ok);
+  document.getElementById("regN").textContent=`${list.length} registros`;
+  el.innerHTML=list.map(r=>`<div class="ri"><div><b>${esc(r.mun)}</b><span class="st r">aguardando</span>
+      <p>${r.q>1?r.q+" × ":""}${esc(r.tl)} (peso ${r.w}) · ${CRITS[r.c].n}${r.d?"<br>"+esc(r.d):""}${r.dh?"<br><span class=\"mono\">"+esc(r.dh)+"</span>":""}${r.fonte?" · "+esc(r.fonte):""}</p></div><div></div></div>`).join("")
+    ||`<p class="empty">Nenhum registro aguardando confirmação neste evento.</p>`;
+}
+function renderEvSel(){
+  const sel=document.getElementById("evSel");
+  const evs=[...new Set(ALL.map(r=>r.ev))].sort((a,b)=>dkey(b)-dkey(a));
+  const html=evs.map(e=>`<option value="${esc(e)}"${e===EV?" selected":""}>${esc(e)}</option>`).join("");
+  if(sel.innerHTML!==html)sel.innerHTML=html;
+}
+function dkey(e){const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(e||"");return m?+m[3]*10000+ +m[2]*100+ +m[1]:0}
+document.getElementById("evSel").onchange=e=>{EV=e.target.value;DRILL=null;const o=compute()[0];SEL=o?o.mun:SEL;render()};
+
+// ---- leitura da planilha ----
+function parseCSV(t){const rows=[];let row=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true; else if(c===","){row.push(f);f=""} else if(c==="\n"){row.push(f);rows.push(row);row=[];f=""} else if(c!=="\r")f+=c}
+  if(f!==""||row.length){row.push(f);rows.push(row)}return rows}
+const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+const GMAP={"grau 1":"g1","grau 2":"g2","grau 3":"g3","abaixo do grau 1":"obs"};
+function rowsFromCSV(csv){
+  const t=parseCSV(csv).filter(r=>r.some(x=>x.trim()!==""));if(t.length<1)return null;
+  const H=t[0].map(norm),col=n=>H.indexOf(n);
+  const okv=x=>x&&!/^#/.test(x);
+  const ix={ev:col("evento"),dh:col("data hora"),mun:col("municipio"),cr:col("criterio"),tp:col("tipo de ocorrencia"),q:col("quantidade"),
+    d:col("detalhe"),fo:col("fonte"),st:col("status"),pe:col("peso"),re:col("redec"),gv:col("grau validado")};
+  if(ix.mun<0||ix.cr<0||ix.tp<0)return null;
+  const CN=CRITS.map(c=>norm(c.n)),MN={};MUNIS.forEach(m=>MN[norm(m.n)]=m.n);
+  const out=[],vals={},red={};
+  t.slice(1).forEach((r,i)=>{const g=k=>ix[k]<0?"":String(r[ix[k]]??"").trim();
+    const mun=MN[norm(g("mun"))];const c=CN.indexOf(norm(g("cr")));if(!mun||c<0)return;
+    const tl=g("tp");const ti=CRITS[c].t.findIndex(x=>norm(x[0])===norm(tl));
+    let w=okv(g("pe"))?parseInt(g("pe"),10):NaN;if(!(w>=1&&w<=3))w=ti>=0?CRITS[c].t[ti][1]:1;
+    const ev=g("ev")||"Sem data";const q=Math.max(1,parseInt(g("q"),10)||1);
+    const st=norm(g("st"));
+    out.push({id:"s"+i,ev,mun,c,t:ti,tl:tl||"Não informado",w,q,d:g("d"),fonte:g("fo"),dh:g("dh"),ok:st===""||st.startsWith("confirm")});
+    const gv=GMAP[norm(g("gv"))];if(gv){(vals[ev]=vals[ev]||{})[mun]={g:gv}}
+    if(okv(g("re")))red[mun]=g("re");
+  });
+  return {out,vals,red};
+}
+function findCSV(x,depth){
+  if(depth>4||x==null)return null;
+  if(typeof x==="string"){const s=x.trim();
+    if(/^"?evento"?\s*,/i.test(s)||/(^|,)"?Munic/i.test(s.split("\n")[0]||""))return s;
+    if(/^[A-Za-z0-9+/=\s]{16,}$/.test(s)){try{const b=atob(s.replace(/\s/g,""));const u=new TextDecoder("utf-8").decode(Uint8Array.from(b,ch=>ch.charCodeAt(0)));if(/munic/i.test(u.split("\n")[0]))return u}catch(e){}}
+    return null}
+  if(Array.isArray(x)){for(const v of x){const r=findCSV(v,depth+1);if(r)return r}return null}
+  if(typeof x==="object"){for(const k of Object.keys(x)){const r=findCSV(x[k],depth+1);if(r)return r}}
+  return null}
+let MCP,JA_LEU=false;
+async function lerPlanilha(manual){
+  let csv=null,erro="";
+  if(window.claude&&window.claude.use){
+    try{if(MCP===undefined)MCP=await window.claude.use("mcp");
+      if(MCP){const res=await MCP.callTool("Google Drive","download_file_content",{fileId:SHEET_ID,exportMimeType:"text/csv"},{cache:false});
+        csv=findCSV(res.payload,0)||findCSV(res.content,0);if(!csv)erro="A planilha foi aberta, mas a aba Registros não foi encontrada. Ela precisa ser a primeira aba."}}
+    catch(e){const c=e&&e.code;
+      erro=c==="server_not_connected"?"Conecte o Google Drive em Configurações › Conectores do claude.ai para ler a planilha."
+        :c==="needs_reauth"?"Reconecte o Google Drive em Configurações › Conectores do claude.ai."
+        :c==="not_in_manifest"?"O acesso ao Google Drive foi recusado para este painel. Libere em Permissões do artefato."
+        :c==="tool_error"?"O Google Drive não abriu a planilha. Verifique se ela está compartilhada com você."
+        :"A planilha não respondeu agora. Nova tentativa em 1 minuto."}}
+  if(!csv&&!(window.claude&&MCP)){
+    try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=Registros`,{cache:"no-store"});
+      const t=r.ok?await r.text():"";if(t&&!/^\s*</.test(t))csv=t;else erro="Para este arquivo ler a planilha, ela precisa estar compartilhada como \"Qualquer pessoa com o link: leitor\"."}
+    catch(e){erro="Sem acesso à planilha neste momento. Mostrando os dados embutidos."}}
+  const p=csv?rowsFromCSV(csv):null;
+  if(p&&p.out.length){
+    ALL=p.out;VALS=p.vals;RED=p.red;SRC="planilha";
+    LIDO=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    const evs=[...new Set(ALL.map(r=>r.ev))];
+    if(!JA_LEU||!evs.includes(EV)){EV=evs.sort((a,b)=>dkey(b)-dkey(a))[0];DRILL=null;const o=compute()[0];SEL=o?o.mun:SEL}
+    JA_LEU=true;
+  }else{
+    if(SRC!=="planilha"){SRCMSG=(erro||(csv?"A planilha ainda não tem registros válidos.":"Sem acesso à planilha."))+" Mostrando os dados embutidos de 03/10."}
+    else if(manual&&erro){SRCMSG=erro}
+  }
+  render();
 }
 
 // ---- controles ----
 function setPressed(on,off){on.setAttribute("aria-pressed","true");off.setAttribute("aria-pressed","false")}
-const vg=document.getElementById("vGestor"),vp=document.getElementById("vPublico"),er=document.getElementById("eReal"),et=document.getElementById("eTeste");
+const vg=document.getElementById("vGestor"),vp=document.getElementById("vPublico");
 vg.onclick=()=>{PUBLIC=false;setPressed(vg,vp);render()};
 vp.onclick=()=>{PUBLIC=true;setPressed(vp,vg);showTab("painel");render()};
-er.onclick=()=>{MODE="real";DRILL=null;SEL="Sumidouro";setPressed(er,et);render()};
-et.onclick=()=>{MODE="teste";setPressed(et,er);const o=compute()[0];SEL=o?o.mun:"Rio de Janeiro";render()};
+document.getElementById("btnAtual").onclick=()=>lerPlanilha(true);
 const tP=document.getElementById("tPainel"),tF=document.getElementById("tForm");
 function showTab(t){document.getElementById("vwPainel").style.display=t==="painel"?"grid":"none";document.getElementById("vwForm").hidden=t!=="form";
   tP.setAttribute("aria-selected",t==="painel");tF.setAttribute("aria-selected",t==="form")}
 tP.onclick=()=>showTab("painel");
-tF.onclick=()=>{showTab("form");if(MODE!=="teste")et.click()};
+tF.onclick=()=>showTab("form");
 render();
-
-// ---- armazenamento compartilhado (somente no link do Claude) ----
-(async()=>{
-  if(!window.claude||!window.claude.use)return;
-  try{
-    DB=await window.claude.use("db");
-    const user=await window.claude.use("user");
-    if(user&&user.can){const w=await user.can("data.write");if(w===false){CANWRITE=false;fSend.disabled=true;say("Você pode ver os registros, mas não registrar. Peça acesso de edição ao responsável pelo painel.",false)}}
-    if(!DB){render();return}
-    DB.collection("registros").onSnapshot(s=>{
-      TEST=s.docs.map(d=>{const x=d.data();return{id:d.id,mun:x.mun,c:+x.c,t:+x.t,q:+x.q||1,d:x.d||"",fonte:x.fonte||"",ok:x.status==="confirmado",ts:x.ts||0}});
-      render()},()=>{});
-    render();
-  }catch(e){DB=null;render()}
-})();
+lerPlanilha(false);
+setInterval(()=>{if(!document.hidden)lerPlanilha(false)},60000);
 </script>
 
 </body>
