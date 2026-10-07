@@ -161,6 +161,9 @@ button.kpi[aria-expanded="true"]{box-shadow:inset 0 -3px 0 var(--orange)}
 .crit ul{margin:0;padding-left:16px;font-size:13px;color:var(--muted)}
 .note{font-size:13.5px;color:var(--muted);border-left:3px solid var(--orange);padding:4px 10px;background:var(--panel2);border-radius:0 6px 6px 0}
 .axr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+a.upd{display:inline-flex;align-items:center;gap:6px;background:var(--orange);color:#fff;text-decoration:none;border-radius:8px;padding:7px 12px;font:700 14px var(--f-display);letter-spacing:.06em;text-transform:uppercase}
+a.upd:hover{filter:brightness(1.08)}
+a.upd:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .axr .lbl{margin-right:4px}
 .axr button{border:1px solid var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:3px 10px;font:600 13px var(--f-body);cursor:pointer}
 
@@ -372,7 +375,8 @@ a.sec{color:var(--accent);font-weight:600}
       </div>
       <p class="msg err" id="formMissing" hidden>O link do formulário ainda não foi configurado neste painel. Enquanto isso, registre direto na aba Registros da planilha.</p>
       <ol class="howto">
-        <li>No formulário, escolha o evento, o município e o critério. Em seguida aparecem só os tipos de ocorrência daquele critério, já com o peso.</li>
+        <li>Para um município <b>novo</b>, use "Abrir formulário". Para <b>atualizar</b> um município já informado, abra o município no painel e clique em <b>"Atualizar este município"</b>: o formulário abre com tudo o que já foi registrado.</li>
+        <li>Informe sempre o <b>total acumulado</b>. Cada envio substitui o valor anterior daquele tipo de ocorrência; o que não for mexido continua valendo, e 0 zera.</li>
         <li>Quem preferir pode digitar direto na aba <b>Registros</b>. As colunas têm listas suspensas e o peso é preenchido sozinho.</li>
         <li>Só entram no cálculo os registros com Status <b>Confirmado</b>. Para confirmar, mude o Status na planilha.</li>
         <li>O grau validado pela equipe fica na aba <b>Validação</b>. Os pesos de cada tipo ficam na aba <b>Pesos</b>.</li>
@@ -405,10 +409,7 @@ const MINCRIT=5, BUMP=6;
 const VALID={"Petrópolis":{g:"g1"},"Niterói":{g:"g1"},"Carapebus":{g:"g1"},"Conceição de Macabu":{g:"g1"},
  "Sumidouro":{g:"g1"},"Rio das Ostras":{g:"g1"},"Macaé":{g:"g1"},
  "Miracema":{g:"obs"},"Varre-Sai":{g:"obs"},"Tanguá":{g:"obs"},"São Francisco de Itabapoana":{g:"obs"},"Rio de Janeiro":{g:"g1"}};
-const REDEC={"Niterói":"03 · Metropolitana","Tanguá":"03 · Metropolitana","Sumidouro":"07 · Serrana I","Petrópolis":"07 · Serrana I",
- "Rio das Ostras":"09 · Litorânea / Baixada Litorânea","Macaé":"09 · Litorânea / Baixada Litorânea",
- "Carapebus":"10 · Norte Fluminense","Conceição de Macabu":"10 · Norte Fluminense","São Francisco de Itabapoana":"10 · Norte Fluminense",
- "Varre-Sai":"11 · Noroeste","Miracema":"11 · Noroeste","Rio de Janeiro":"01"};
+const REDEC={"Rio de Janeiro": "01 · Capital", "Belford Roxo": "02 · Baixada Fluminense", "Duque de Caxias": "02 · Baixada Fluminense", "Guapimirim": "02 · Baixada Fluminense", "Magé": "02 · Baixada Fluminense", "Mesquita": "02 · Baixada Fluminense", "Nilópolis": "02 · Baixada Fluminense", "Nova Iguaçu": "02 · Baixada Fluminense", "São João de Meriti": "02 · Baixada Fluminense", "Cachoeiras de Macacu": "03 · Metropolitana", "Itaboraí": "03 · Metropolitana", "Maricá": "03 · Metropolitana", "Niterói": "03 · Metropolitana", "São Gonçalo": "03 · Metropolitana", "Tanguá": "03 · Metropolitana", "Paraty": "04 · Costa Verde", "Angra dos Reis": "04 · Costa Verde", "Mangaratiba": "04 · Costa Verde", "Barra do Piraí": "05 · Sul I", "Barra Mansa": "05 · Sul I", "Comendador Levy Gasparian": "05 · Sul I", "Itatiaia": "05 · Sul I", "Paraíba do Sul": "05 · Sul I", "Paty do Alferes": "05 · Sul I", "Pinheiral": "05 · Sul I", "Porto Real": "05 · Sul I", "Quatis": "05 · Sul I", "Resende": "05 · Sul I", "Rio das Flores": "05 · Sul I", "Três Rios": "05 · Sul I", "Valença": "05 · Sul I", "Vassouras": "05 · Sul I", "Volta Redonda": "05 · Sul I", "Engenheiro Paulo de Frontin": "06 · Sul II", "Itaguaí": "06 · Sul II", "Japeri": "06 · Sul II", "Mendes": "06 · Sul II", "Miguel Pereira": "06 · Sul II", "Paracambi": "06 · Sul II", "Piraí": "06 · Sul II", "Queimados": "06 · Sul II", "Rio Claro": "06 · Sul II", "Seropédica": "06 · Sul II", "Areal": "07 · Serrana I", "Carmo": "07 · Serrana I", "Petrópolis": "07 · Serrana I", "São José do Vale do Rio Preto": "07 · Serrana I", "Sapucaia": "07 · Serrana I", "Sumidouro": "07 · Serrana I", "Teresópolis": "07 · Serrana I", "Bom Jardim": "08 · Serrana II", "Cantagalo": "08 · Serrana II", "Cordeiro": "08 · Serrana II", "Duas Barras": "08 · Serrana II", "Macuco": "08 · Serrana II", "Nova Friburgo": "08 · Serrana II", "Santa Maria Madalena": "08 · Serrana II", "São Sebastião do Alto": "08 · Serrana II", "Trajano de Moraes": "08 · Serrana II", "Araruama": "09 · Baixada Litorânea", "Armação dos Búzios": "09 · Baixada Litorânea", "Arraial do Cabo": "09 · Baixada Litorânea", "Cabo Frio": "09 · Baixada Litorânea", "Casimiro de Abreu": "09 · Baixada Litorânea", "Iguaba Grande": "09 · Baixada Litorânea", "Rio Bonito": "09 · Baixada Litorânea", "São Pedro da Aldeia": "09 · Baixada Litorânea", "Saquarema": "09 · Baixada Litorânea", "Silva Jardim": "09 · Baixada Litorânea", "Macaé": "09 · Baixada Litorânea", "Rio das Ostras": "09 · Baixada Litorânea", "Campos dos Goytacazes": "10 · Norte", "Carapebus": "10 · Norte", "Conceição de Macabu": "10 · Norte", "Quissamã": "10 · Norte", "São Francisco de Itabapoana": "10 · Norte", "São João da Barra": "10 · Norte", "Aperibé": "11 · Noroeste", "Bom Jesus do Itabapoana": "11 · Noroeste", "Cambuci": "11 · Noroeste", "Italva": "11 · Noroeste", "Itaocara": "11 · Noroeste", "Itaperuna": "11 · Noroeste", "Laje do Muriaé": "11 · Noroeste", "Miracema": "11 · Noroeste", "Natividade": "11 · Noroeste", "Porciúncula": "11 · Noroeste", "Santo Antônio de Pádua": "11 · Noroeste", "São Fidélis": "11 · Noroeste", "Cardoso Moreira": "11 · Noroeste", "São José de Ubá": "11 · Noroeste", "Varre-Sai": "11 · Noroeste"};
 const NOTES={
  "Sumidouro":"Ofício nº 294/GAB/2026 solicita apoio emergencial do Estado para recuperação e liberação das estradas, com retroescavadeiras, pás mecânicas/carregadeiras, caminhões basculantes e caminhão-pipa. Equipe SEDEC em vistoria técnica (VTR ARDC 037) com a Secretaria de Administração e a COMDEC.",
  "Rio das Ostras":"Chuvas intensas (COBRADE 1.3.2.1.4), início em 03/10 às 07h20. Abrigo: CIC (Rua Francisco de Mattos, s/nº, Nova Esperança). Fonte: DCM Rio das Ostras.",
@@ -582,13 +583,41 @@ function renderDrill(){
   el.querySelector("#dClose").onclick=()=>{DRILL=null;render()};
   el.querySelectorAll(".drow").forEach(b=>b.onclick=()=>goDetail(b.dataset.m));
 }
+// ---- "Atualizar este município": abre o formulário já preenchido com a situação atual ----
+const ALERTA_FORM=["SMS 40199","Sirene acionada","Cell Broadcast","Alerta de inundação emitido"];
+const FONTES_FORM=["CEMADEN-RJ","REDEC","SISGEO"];
+const tMarcar=c=>c===6?"Alertas e alarmes acionados":"Ocorreu · "+CRITS[c].n;
+const tDetalhe=c=>c===0?"Detalhe de chuva e/ou vento":"Detalhe · "+CRITS[c].n;
+function linkAtualizar(mun){
+  const base=FM["__endereco__"];if(!base)return "";
+  const P=new URLSearchParams();P.append("usp","pp_url");
+  const add=(t,v)=>{const id=FM[t];if(id&&v!==""&&v!=null)P.append("entry."+id,v)};
+  const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(EV);
+  if(m)add("Data do evento",`${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`);
+  add("Município",mun);
+  const rows=recs().filter(r=>r.ok&&r.mun===mun).sort((a,b)=>dhKey(a.dh)-dhKey(b.dh));
+  new Set(rows.flatMap(r=>String(r.fonte||"").split(/\s*,\s*/))).forEach(f=>{if(FONTES_FORM.includes(f))add("Fonte",f)});
+  const det={};
+  rows.forEach(r=>{
+    const rot=r.tl+" · peso "+r.w;
+    if(r.c===6){if(ALERTA_FORM.includes(r.tl))add(tMarcar(6),rot)}
+    else if(FM[rot]){add(tMarcar(r.c),rot);add(rot,String(r.q))}
+    if(r.d&&!/^Peso de calibra/.test(r.d))det[r.c]=r.d;
+  });
+  Object.keys(det).forEach(c=>add(tDetalhe(+c),det[c]));
+  return base+(base.includes("?")?"&":"?")+P.toString();
+}
+function botaoAtualizar(mun,novo){
+  const u=linkAtualizar(mun);if(!u)return "";
+  return `<a class="upd pub-hide" href="${esc(u)}" target="_blank" rel="noopener">${novo?"Registrar este município":"Atualizar este município"} ›</a>`;
+}
 function goDetail(m){SEL=m;render();document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"start"})}
 function renderDetail(){
   const el=document.getElementById("detail");const o=DATA.find(x=>x.mun===SEL);
-  if(!o){el.innerHTML=`<div class="dhead"><h3>${esc(SEL)}</h3><span class="chip none">Sem registro</span></div><p style="color:var(--muted);margin:0">Nenhuma ocorrência confirmada para este município. Clique em um município do mapa ou do ranking.</p>`;return}
+  if(!o){el.innerHTML=`<div class="dhead"><h3>${esc(SEL)}</h3><div class="dmeta"><span class="chip none">Sem registro</span>${botaoAtualizar(SEL,true)}</div></div><p style="color:var(--muted);margin:0">Nenhuma ocorrência confirmada para este município. Clique em um município do mapa ou do ranking.</p>`;return}
   const pos=DATA.indexOf(o)+1,note=EV===EV_BASE?NOTES[o.mun]:"";
   el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º mais impactado · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
-    <div class="dmeta"><span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span>
+    <div class="dmeta">${botaoAtualizar(o.mun,false)}<span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span>
     ${o.vg&&o.vg!==o.g?`<span class="chip ghost pub-hide" title="Grau informado na aba Validação da planilha">Validação da equipe: ${GL[o.vg]}</span>`:""}</div></div>
     <div class="nums"><div><b>${o.idx}/30</b><span>índice de impacto</span></div><div><b>${o.n}</b><span>critérios em nível 1 ou mais</span></div><div><b>${o.n2}</b><span>critérios em nível 2 ou mais</span></div><div><b>${o.n3}</b><span>critérios em nível 3</span></div>
       <div><b>${o.dh}</b><span>desalojados</span></div><div><b>${o.db}</b><span>desabrigados</span></div></div>
@@ -628,7 +657,7 @@ document.getElementById("lnkSheet").href=SHEET_URL;
 (function(){const a=document.getElementById("lnkForm");if(FORM_URL){a.href=FORM_URL}else{a.removeAttribute("href");a.setAttribute("aria-disabled","true");a.style.opacity=".45";document.getElementById("formMissing").hidden=false}})();
 function renderRegList(){
   const el=document.getElementById("regList");
-  const list=recs().filter(r=>!r.ok);
+  const list=recs().filter(r=>!r.ok&&!r.sub);
   document.getElementById("regN").textContent=`${list.length} registros`;
   el.innerHTML=list.map(r=>`<div class="ri"><div><b>${esc(r.mun)}</b><span class="st r">aguardando</span>
       <p>${r.q>1?r.q+" × ":""}${esc(r.tl)} (peso ${r.w}) · ${CRITS[r.c].n}${r.d?"<br>"+esc(r.d):""}${r.dh?"<br><span class=\"mono\">"+esc(r.dh)+"</span>":""}${r.fonte?" · "+esc(r.fonte):""}</p></div><div></div></div>`).join("")
@@ -658,6 +687,8 @@ function rowsFromCSV(csv){
   const ix={ev:col("evento"),dh:col("data hora"),mun:col("municipio"),cr:col("criterio"),tp:col("tipo de ocorrencia"),q:col("quantidade"),
     d:col("detalhe"),fo:col("fonte"),st:col("status"),pe:col("peso"),re:col("redec"),gv:col("grau validado")};
   if(ix.mun<0||ix.cr<0||ix.tp<0)return null;
+  const fm={},ic=col("campo do formulario"),ik=col("codigo do campo");
+  if(ic>=0&&ik>=0)t.slice(1).forEach(r=>{const k=String(r[ic]||"").trim(),v=String(r[ik]||"").trim();if(k&&v)fm[k]=v});
   const CN=CRITS.map(c=>norm(c.n)),MN={};const ALIAS={[norm("Grupos operacionais e redes sociais")]:8};MUNIS.forEach(m=>MN[norm(m.n)]=m.n);
   const out=[],vals={},red={};
   t.slice(1).forEach((r,i)=>{const g=k=>ix[k]<0?"":String(r[ix[k]]??"").trim();
@@ -667,11 +698,20 @@ function rowsFromCSV(csv){
     let w=okv(g("pe"))?parseInt(g("pe"),10):NaN;if(!(w>=1&&w<=3))w=ti>=0?CRITS[c].t[ti][1]:1;
     const ev=g("ev")||"Sem data";const q=Math.max(1,parseInt(g("q"),10)||1);
     const st=norm(g("st"));
-    out.push({id:"s"+i,ev,mun,c,t:ti,tl:tl||"Não informado",w,q,d:g("d"),fonte:g("fo"),dh:g("dh"),ok:st===""||st.startsWith("confirm")});
+    out.push({id:"s"+i,ev,mun,c,t:ti,tl:tl||"Não informado",w,q,d:g("d"),fonte:g("fo"),dh:g("dh"),ok:st===""||st.startsWith("confirm"),sub:st.startsWith("substitu"),ord:i});
     const gv=GMAP[norm(g("gv"))];if(gv){(vals[ev]=vals[ev]||{})[mun]={g:gv}}
     if(okv(g("re")))red[mun]=g("re");
   });
-  return {out,vals,red};
+  return {out:situacaoAtual(out),vals,red,fm};
+}
+// Situação atual: para cada evento + município + tipo, vale só o registro confirmado mais recente
+function dhKey(s){const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/.exec(s||"");return m?((+m[3]*100+ +m[2])*100+ +m[1])*10000+(+(m[4]||0))*100+ +(m[5]||0):0}
+function situacaoAtual(list){
+  const best={};
+  list.forEach(r=>{if(!r.ok)return;const k=r.ev+"|"+r.mun+"|"+r.c+"|"+r.tl;const b=best[k];
+    if(!b||dhKey(r.dh)>dhKey(b.dh)||(dhKey(r.dh)===dhKey(b.dh)&&r.ord>b.ord))best[k]=r});
+  const keep=new Set(Object.values(best));
+  return list.filter(r=>!r.ok?!r.sub:keep.has(r));
 }
 function findCSV(x,depth){
   if(depth>4||x==null)return null;
@@ -682,7 +722,7 @@ function findCSV(x,depth){
   if(Array.isArray(x)){for(const v of x){const r=findCSV(v,depth+1);if(r)return r}return null}
   if(typeof x==="object"){for(const k of Object.keys(x)){const r=findCSV(x[k],depth+1);if(r)return r}}
   return null}
-let MCP,JA_LEU=false;
+let MCP,JA_LEU=false,FM={};
 async function lerPlanilha(manual){
   let csv=null,erro="";
   if(window.claude&&window.claude.use){
@@ -701,7 +741,7 @@ async function lerPlanilha(manual){
     catch(e){erro="Sem acesso à planilha neste momento. Mostrando os dados embutidos."}}
   const p=csv?rowsFromCSV(csv):null;
   if(p&&p.out.length){
-    ALL=p.out;VALS=p.vals;RED=p.red;SRC="planilha";
+    ALL=p.out;VALS=p.vals;RED=p.red;FM=p.fm||{};SRC="planilha";
     LIDO=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
     const evs=[...new Set(ALL.map(r=>r.ev))];
     if(!JA_LEU||!evs.includes(EV)){EV=evs.sort((a,b)=>dkey(b)-dkey(a))[0];DRILL=null;const o=compute()[0];SEL=o?o.mun:SEL}
