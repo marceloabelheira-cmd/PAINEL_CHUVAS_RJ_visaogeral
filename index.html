@@ -12,8 +12,8 @@
   --bg:#eef1f6; --panel:#ffffff; --panel2:#f5f7fb; --line:#d5dbe6; --fg:#141d33; --muted:#59647a;
   --navy:#1d2859; --orange:#f26328;
   --accent:#24408f; --accent-soft:#dde5f6;
-  --g0:#e2e7ef; --obs:#9fb0c9; --g1:#f2c230; --g2:#ee7d22; --g3:#c8102e;
-  --g1fg:#3d2f00; --g2fg:#ffffff; --g3fg:#ffffff;
+  --g0:#e2e7ef; --obs:#9fb0c9; --g1:#f39200; --g2:#d7191c; --g3:#7030a0;
+  --g1fg:#2e1600; --g2fg:#ffffff; --g3fg:#ffffff;
   --lv1:#cfdcf3; --lv2:#6f8fd6; --lv3:#24408f;
   --nr1:#2e9e4f; --nr2:#f2c230; --nr3:#ee7d22; --nr4:#c8102e; --nr5:#7a3aa8;
   --ok:#1f7a45; --ok-soft:#dcf1e4; --warn:#9a6a00; --warn-soft:#fbf0cf; --err:#b3122b;
@@ -56,6 +56,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .nr .now{display:grid;line-height:1}
 .nr .now small{font:600 12px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:#c9d2ea}
 .nr .now b{font:700 34px var(--f-display);color:var(--nr2)}
+.nr .now b.n1{color:#5fd38a}
 .nrsteps{display:flex;gap:4px}
 .nrsteps span{width:34px;height:34px;border-radius:6px;display:grid;place-items:center;font:700 15px var(--f-display);color:#fff;opacity:.28;border:2px solid transparent}
 .nrsteps span.on{opacity:1;border-color:#fff;color:#2b2200;transform:scale(1.08)}
@@ -63,8 +64,13 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .nrsteps button.on{all:unset;box-sizing:border-box;width:34px;height:34px;border-radius:6px;display:grid;place-items:center;font:700 15px var(--f-display);color:#2b2200;border:2px solid #fff;transform:scale(1.08);cursor:help;position:relative}
 .nrsteps button.on::after{content:"i";position:absolute;top:-7px;right:-7px;width:15px;height:15px;border-radius:50%;background:var(--orange);color:#fff;font:700 10px/15px var(--f-body);text-align:center}
 .nrsteps button.on:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
-.nrtip{position:absolute;top:calc(100% + 10px);right:0;z-index:20;width:min(420px,calc(100vw - 32px));background:var(--panel);color:var(--fg);border:1px solid var(--line);border-top:4px solid var(--nr2);border-radius:10px;padding:14px 16px;box-shadow:0 14px 34px rgba(10,18,40,.35);font-size:14px;line-height:1.5;text-align:left}
-.nrtip::before{content:"";position:absolute;top:-11px;right:136px;border:7px solid transparent;border-bottom-color:var(--nr2)}
+.nrtip{position:absolute;top:calc(100% + 10px);right:0;z-index:20;width:min(420px,calc(100vw - 32px));background:var(--panel);color:var(--fg);border:1px solid var(--line);border-top:4px solid var(--nrc,var(--nr2));border-radius:10px;padding:14px 16px;box-shadow:0 14px 34px rgba(10,18,40,.35);font-size:14px;line-height:1.5;text-align:left}
+.nrtip::before{content:"";position:absolute;top:-11px;right:var(--ar,136px);border:7px solid transparent;border-bottom-color:var(--nrc,var(--nr2))}
+.nrtip .msg{white-space:pre-line}
+.nrtip .msg b{color:var(--nr4);font:700 18px var(--f-display);letter-spacing:.04em}
+.nrtip .hist{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:grid;gap:2px}
+.nrtip .hist b{font-family:var(--f-mono);font-weight:500;color:var(--fg)}
+.nrtip a.nrup{display:inline-block;margin-top:10px;color:var(--accent);font-weight:600}
 .nrtip .h1{font:700 18px var(--f-display);letter-spacing:.04em;color:var(--g3)}
 .nrtip .h2{font:700 16px var(--f-display);letter-spacing:.04em;text-transform:uppercase}
 .nrtip .chg{font:700 20px var(--f-display);margin:4px 0 8px}
@@ -110,7 +116,7 @@ button.kpi[aria-expanded="true"]{box-shadow:inset 0 -3px 0 var(--orange)}
 .drow .bar{display:block;height:5px;border-radius:3px;background:var(--g0);margin-top:4px;overflow:hidden}
 .drow .bar i{display:block;height:100%;background:var(--orange)}
 .ritem .more{font:600 12px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.kpi.g3 b{color:var(--g3)} .kpi.g2 b{color:var(--g2)} .kpi.g1 b{color:#b88a00}
+.kpi.g3 b{color:var(--g3)} .kpi.g2 b{color:var(--g2)} .kpi.g1 b{color:#c46f00}
 :root[data-theme="dark"] .kpi.g1 b{color:var(--g1)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .kpi.g1 b{color:var(--g1)}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -241,7 +247,7 @@ table.icrt{border-collapse:collapse;width:100%;min-width:1000px;font-family:Cali
 .icrt th.g{font:700 20px Calibri,"Barlow Condensed",Arial,sans-serif;padding:7px}
 .icrt th.g u{text-underline-offset:3px}
 .icrt th.gs{font:700 italic 12.5px Calibri,Arial,sans-serif;padding:6px}
-.icrt .c1{background:#ffc000;color:#000}.icrt .c2{background:#ff0000;color:#fff}.icrt .c3{background:#7030a0;color:#fff}
+.icrt .c1{background:#f39200;color:#000}.icrt .c2{background:#e00000;color:#fff}.icrt .c3{background:#7030a0;color:#fff}
 .icrt td.n{width:44px;font:600 14px Calibri,Arial,sans-serif;background:#fff}
 .icrt td.k{width:280px;background:#fff;font:600 13.5px/1.35 Calibri,Arial,sans-serif;padding:8px 10px}
 .icrt td.k em{display:block;color:#e00000;font-style:normal;font-weight:700;margin-top:2px}
@@ -341,18 +347,10 @@ a.sec{color:var(--accent);font-weight:600}
         <p>Impactos por município segundo a Matriz ICR · SEDEC-RJ</p>
       </div>
     </div>
-    <div class="nr" aria-label="Nível de Resposta atual: NR 2, amarelo">
-      <div class="now"><small>Nível de Resposta</small><b>NR 2</b></div>
+    <div class="nr" id="nrBox" aria-label="Nível de Resposta">
+      <div class="now"><small>Nível de Resposta</small><b id="nrNow">NR</b></div>
       <div class="nrsteps" id="nrsteps"></div>
-      <div class="nrtip" id="nrtip" role="tooltip" hidden>
-        <div class="meta"><b>03/10/26 · 18:17</b><span>Grupo Info - Risco - Desastre - SEDEC RJ</span></div>
-        <div class="h1">🛑 ATENÇÃO!</div>
-        <div class="h2">Mudança de nível – Resposta da SEDEC</div>
-        <div class="chg">🟢 NR 1 ➡️ 🟡 NR 2</div>
-        <p>Boa noite!</p>
-        <p>Após análise dos indicadores disponíveis, verifica-se que os níveis de monitoramento Meteorológico, Hidrológico e de Deslizamentos apresentam, predominantemente, condições ALTAS e MUITO ALTAS.</p>
-        <p>Considerando também as ocorrências relacionadas às chuvas registradas no SISGEO e informadas pelas Regionais de Proteção e Defesa Civil, bem como a necessidade de apoio pontual do GRAC, fica deliberada, conforme o PLANCON 2025/2026 – Chuvas Intensas, a evolução do Nível de Resposta 1 (NR 1) para o NR 2.</p>
-      </div>
+      <div class="nrtip" id="nrtip" role="tooltip" hidden></div>
     </div>
   </div>
 </header>
@@ -688,20 +686,41 @@ const GLL={g3:"muito alto",g2:"alto",g1:"moderado",obs:"",none:""};
 const col=g=>`var(--${g==="none"?"g0":g})`;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-const NRC=["--nr1","--nr2","--nr3","--nr4","--nr5"],NR_ATUAL=2;
-document.getElementById("nrsteps").innerHTML=NRC.map((c,i)=>i+1===NR_ATUAL
-  ?`<button type="button" class="on" id="nrBtn" style="background:var(${c})" aria-describedby="nrtip" aria-expanded="false" aria-label="NR ${i+1}: ver comunicado de mudança de nível">${i+1}</button>`
-  :`<span style="background:var(${c})">${i+1}</span>`).join("");
-(function(){const b=document.getElementById("nrBtn"),t=document.getElementById("nrtip");let pinned=false;
-  const show=v=>{t.hidden=!v;b.setAttribute("aria-expanded",v)};
-  b.addEventListener("mouseenter",()=>show(true));
-  b.addEventListener("mouseleave",()=>{if(!pinned)show(false)});
-  b.addEventListener("focus",()=>show(true));
-  b.addEventListener("blur",()=>{if(!pinned)show(false)});
-  b.addEventListener("click",e=>{e.stopPropagation();pinned=!pinned;show(pinned)});
+// ---- Nível de Resposta: vem da planilha (aba "Nível de Resposta"); estes são os registros embutidos ----
+const NRC=["--nr1","--nr2","--nr3","--nr4","--nr5"];
+const NR_EMB=[{"dt": "03/10/2026 18:17", "nr": 2, "msg": "🛑 ATENÇÃO!\n\nMUDANÇA DE NÍVEL – RESPOSTA DA SEDEC\n\n🟢 NR 1 ➡️ 🟡 NR 2\n\nBoa noite!\n\nApós análise dos indicadores disponíveis, verifica-se que os níveis de monitoramento Meteorológico, Hidrológico e de Deslizamentos apresentam, predominantemente, condições ALTAS e MUITO ALTAS.\n\nConsiderando também as ocorrências relacionadas às chuvas registradas no SISGEO e informadas pelas Regionais de Proteção e Defesa Civil, bem como a necessidade de apoio pontual do GRAC, fica deliberada, conforme o PLANCON 2025/2026 – Chuvas Intensas, a evolução do Nível de Resposta 1 (NR 1) para o NR 2.", "fonte": "Grupo Info - Risco - Desastre - SEDEC RJ"}, {"dt": "12/10/2026 15:36", "nr": 1, "msg": "🛑 ATENÇÃO!\n\nMUDANÇA DE NÍVEL DE RESPOSTA DA SEDEC/RJ\n\n🟡 NR 2 ➡️ 🟢 NR 1\n\nApós análise dos indicadores disponíveis, verifica-se que os níveis de monitoramento Meteorológico, Hidrológico e de Deslizamentos apresentam, predominantemente, condições MUITO BAIXAS e BAIXAS.\n\nConsiderando também o retorno da normalidade das ocorrências relacionadas às chuvas no SISGEO, e a sinalização, pelas Regionais de Proteção e Defesa Civil - REDECs, do estabelecimento dos serviços essenciais, fica deliberado, conforme o PLANCON 2025/2026 – Chuvas Intensas, a REGRESSÃO do Nível de Resposta 2 (NR 2) para o NR 1.", "fonte": "Grupo Info - Risco - Desastres - SEDEC-RJ"}];
+let NRL=NR_EMB.slice(),NR_KEY="",NR_PIN=false;
+function renderNR(){
+  const L=NRL.slice().sort((a,b)=>dhKey(a.dt)-dhKey(b.dt));const cur=L[L.length-1];if(!cur)return;
+  const key=JSON.stringify(L)+"|"+(FM_NR()||"");if(key===NR_KEY)return;NR_KEY=key;
+  const n=cur.nr,now=document.getElementById("nrNow");
+  now.textContent="NR "+n;now.style.color=`var(${NRC[n-1]})`;
+  document.getElementById("nrBox").setAttribute("aria-label","Nível de Resposta atual: NR "+n);
+  document.getElementById("nrsteps").innerHTML=NRC.map((c,i)=>i+1===n
+    ?`<button type="button" class="on" id="nrBtn" style="background:var(${c});color:${n===2?"#2b2200":"#fff"}" aria-describedby="nrtip" aria-expanded="false" aria-label="NR ${n}: ver comunicado da mudança de nível">${i+1}</button>`
+    :`<span style="background:var(${c})">${i+1}</span>`).join("");
+  const t=document.getElementById("nrtip");
+  t.style.setProperty("--nrc",`var(${NRC[n-1]})`);t.style.setProperty("--ar",(12+(5-n)*38+17-7)+"px");
+  const linhas=String(cur.msg||"").split(/\r?\n/);
+  const msg=linhas.map((l,k)=>k===0&&l.trim()?`<b>${esc(l)}</b>`:esc(l)).join("\n");
+  const hist=L.slice().reverse().slice(0,6);
+  const u=FM_NR();
+  t.innerHTML=`<div class="meta"><b>${esc(cur.dt)}</b><span>${esc(cur.fonte||"")}</span></div><div class="msg">${msg}</div>
+    ${hist.length>1?`<div class="hist"><span class="lbl">Histórico</span>${hist.map(h=>`<span><b>${esc(h.dt)}</b> · NR ${h.nr}</span>`).join("")}</div>`:""}
+    ${u?`<a class="nrup pub-hide" href="${esc(u)}" target="_blank" rel="noopener">Registrar mudança de NR ›</a>`:""}`;
+}
+function FM_NR(){try{return FM["__form_nr__"]||""}catch(e){return ""}}
+(function(){const box=document.getElementById("nrsteps"),t=document.getElementById("nrtip");
+  const btn=()=>document.getElementById("nrBtn");
+  const show=v=>{t.hidden=!v;const b=btn();if(b)b.setAttribute("aria-expanded",v)};
+  box.addEventListener("mouseover",e=>{if(e.target.id==="nrBtn")show(true)});
+  box.addEventListener("mouseout",e=>{if(e.target.id==="nrBtn"&&!NR_PIN)show(false)});
+  box.addEventListener("focusin",e=>{if(e.target.id==="nrBtn")show(true)});
+  box.addEventListener("focusout",e=>{if(e.target.id==="nrBtn"&&!NR_PIN)show(false)});
+  box.addEventListener("click",e=>{if(e.target.id==="nrBtn"){e.stopPropagation();NR_PIN=!NR_PIN;show(NR_PIN)}});
   t.addEventListener("click",e=>e.stopPropagation());
-  document.addEventListener("click",()=>{if(pinned){pinned=false;show(false)}});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"){pinned=false;show(false)}});})();
+  document.addEventListener("click",()=>{if(NR_PIN){NR_PIN=false;show(false)}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){NR_PIN=false;show(false)}});})();
 
 const svg=document.getElementById("map");svg.setAttribute("viewBox",`0 0 ${MAP_W} ${MAP_H}`);
 const NS="http://www.w3.org/2000/svg",pathBy={};
@@ -715,7 +734,7 @@ MUNIS.forEach(m=>{const p=document.createElementNS(NS,"path");p.setAttribute("d"
   p.addEventListener("mouseleave",()=>tip.hidden=true)});
 
 function render(){
-  DATA=compute();document.body.classList.toggle("public",PUBLIC);
+  DATA=compute();document.body.classList.toggle("public",PUBLIC);renderNR();
   document.getElementById("evTitle").textContent="Evento de "+EV;
   document.getElementById("evSub").innerHTML=`<span class="srcdot ${SRC==="planilha"?"on":SRCMSG.startsWith("Conectando")?"":"err"}"></span>`+esc(SRC==="planilha"?`Planilha Google · lida às ${LIDO} · atualiza a cada minuto`:SRCMSG);
   renderEvSel();
@@ -984,7 +1003,9 @@ function rowsFromCSV(csv){
     const gv=GMAP[norm(g("gv"))];if(gv){(vals[ev]=vals[ev]||{})[mun]={g:gv}}
     if(okv(g("re")))red[mun]=g("re");
   });
-  return {out:situacaoAtual(out),vals,red,fm};
+  const nr=[],a1=col("nr data hora"),a2=col("nr nivel"),a3=col("nr mensagem"),a4=col("nr fonte");
+  if(a1>=0&&a2>=0)t.slice(1).forEach(r=>{const n=parseInt(r[a2],10);if(n>=1&&n<=5)nr.push({dt:String(r[a1]||"").trim(),nr:n,msg:a3>=0?r[a3]:"",fonte:a4>=0?r[a4]:""})});
+  return {out:situacaoAtual(out),vals,red,fm,nr};
 }
 // Situação atual: para cada evento + município + tipo, vale só o registro confirmado mais recente
 function dhKey(s){const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/.exec(s||"");return m?((+m[3]*100+ +m[2])*100+ +m[1])*10000+(+(m[4]||0))*100+ +(m[5]||0):0}
@@ -1023,7 +1044,7 @@ async function lerPlanilha(manual){
     catch(e){erro="Sem acesso à planilha neste momento."}}
   const p=csv?rowsFromCSV(csv):null;
   if(p&&p.out.length){
-    ALL=p.out;VALS=p.vals;RED=p.red;FM=p.fm||{};SRC="planilha";
+    ALL=p.out;VALS=p.vals;RED=p.red;FM=p.fm||{};if(p.nr&&p.nr.length)NRL=p.nr;SRC="planilha";
     LIDO=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
     const evs=[...new Set(ALL.map(r=>r.ev))];
     if(!JA_LEU||!evs.includes(EV)){EV=evs.sort((a,b)=>dkey(b)-dkey(a))[0];DRILL=null;const o=compute()[0];SEL=o?o.mun:SEL}
