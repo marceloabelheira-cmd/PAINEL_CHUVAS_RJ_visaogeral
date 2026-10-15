@@ -337,6 +337,47 @@ a.sec{color:var(--accent);font-weight:600}
 .ract{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .ract button{border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:6px;padding:4px 9px;font:600 13px var(--f-body);cursor:pointer}
 .ract button.danger{color:var(--err);border-color:var(--err)}
+/* ---- Calendário Situacional ---- */
+.cal-leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);align-items:center}
+.cal-leg span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.cal-leg i{display:inline-block;width:14px;height:14px;border-radius:4px;flex:none}
+.cal-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr))}
+.calm{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}
+.calm>header{background:var(--navy);color:#fff;display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:12px 16px}
+.calm>header h3{font:700 17px var(--f-display);letter-spacing:.12em;margin:0}
+.calm>header span{font-size:12px;opacity:.78;white-space:nowrap}
+.calw{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:9px 12px 7px;border-bottom:1px solid var(--line);
+  font:600 11px var(--f-display);letter-spacing:.1em;color:var(--muted);text-align:center}
+.cald{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:10px 12px 14px}
+.cd{aspect-ratio:1/.9;min-width:0;border-radius:8px;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  padding:0;font-family:var(--f-display);line-height:1;position:relative}
+.cd b{font-weight:600;font-size:clamp(15px,2.2vw,18px)}
+.cd small{font:500 10px var(--f-mono);opacity:.85;white-space:nowrap}
+.cd.pad{visibility:hidden}
+.cd.none{background:var(--panel);border-color:var(--line);color:var(--muted)}
+.cd.obs{background:var(--obs);color:#0f1b33}
+.cd.g1{background:var(--g1);color:var(--g1fg)}
+.cd.g2{background:var(--g2);color:var(--g2fg)}
+.cd.g3{background:var(--g3);color:var(--g3fg)}
+:root[data-theme="dark"] .cd.obs{color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cd.obs{color:#fff}}
+button.cd{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+button.cd:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(10,20,45,.22)}
+button.cd:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.cd.cur{outline:3px solid var(--fg);outline-offset:2px}
+.cd.hoje b{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.cd.fut{opacity:.45}
+@media (prefers-reduced-motion:reduce){button.cd{transition:none}button.cd:hover{transform:none}}
+@media (max-width:480px){.cd small .u{display:none}.cald,.calw{gap:4px;padding-inline:8px}}
+.caltip{position:fixed;z-index:60;width:max-content;max-width:min(300px,calc(100vw - 16px));background:var(--panel);color:var(--fg);border:1px solid var(--line);
+  border-radius:8px;box-shadow:0 10px 28px rgba(10,20,45,.22);padding:10px 12px;font-size:13px;pointer-events:none}
+.caltip .tt-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.caltip .tt-h b{font:700 15px var(--f-display);letter-spacing:.02em}
+.caltip ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+.caltip li{display:flex;align-items:center;gap:7px}
+.caltip li i{width:10px;height:10px;border-radius:3px;flex:none}
+.caltip li em{margin-left:auto;padding-left:10px;font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}
+.caltip p{margin:6px 0 0;color:var(--muted);font-size:12px}
 </style>
 
 </head>
@@ -379,6 +420,7 @@ a.sec{color:var(--accent);font-weight:600}
     <button role="tab" id="tPainel" aria-selected="true">Painel</button>
     <button role="tab" id="tIcr" aria-selected="false">Matriz ICR</button>
     <button role="tab" id="tAxr" aria-selected="false">Matriz AxR</button>
+    <button role="tab" id="tCal" aria-selected="false">Calendário Situacional</button>
     <button role="tab" id="tForm" class="pub-hide" aria-selected="false">Registrar ocorrência</button>
   </nav>
 
@@ -487,6 +529,22 @@ a.sec{color:var(--accent);font-weight:600}
     <div class="axrc-wrap" id="axrCl" hidden><table class="axrc" id="axrc"></table></div>
     <p class="foot" style="text-align:left;margin:0">Totais do estado = soma da situação atual de todos os municípios no evento selecionado. Clique numa linha para ver os municípios. Responsabilidades em versão preliminar, para validação da equipe.</p>
   </div>
+
+  <div id="vwCal" class="axr-wrap" hidden>
+    <section class="panel icr-bar">
+      <div><h2 style="font-size:22px">Calendário Situacional de Impactos</h2><span class="lbl" id="calSub"></span></div>
+      <div class="cal-leg" aria-label="Legenda do calendário">
+        <span><i style="background:var(--panel);border:1px solid var(--line)"></i>Sem impacto</span>
+        <span><i style="background:var(--obs)"></i>Com ocorrências, abaixo do grau 1</span>
+        <span><i style="background:var(--g1)"></i>Grau 1</span>
+        <span><i style="background:var(--g2)"></i>Grau 2</span>
+        <span><i style="background:var(--g3)"></i>Grau 3</span>
+      </div>
+    </section>
+    <div class="cal-grid" id="calGrid"></div>
+    <p class="foot" style="text-align:left;margin:0">A cor do dia segue o maior grau entre os municípios. O número abaixo do dia é a quantidade de municípios com ocorrência, em qualquer grau. Clique no dia para abrir o painel daquele evento.</p>
+  </div>
+  <div class="caltip" id="calTip" role="tooltip" hidden></div>
 
   <div id="vwForm" class="formgrid" hidden>
     <section class="panel" style="display:grid;gap:12px">
@@ -741,6 +799,7 @@ MUNIS.forEach(m=>{const p=document.createElementNS(NS,"path");p.setAttribute("d"
   p.addEventListener("mouseleave",()=>tip.hidden=true)});
 
 function render(){
+  if(!document.getElementById("vwCal").hidden)renderCal();
   DATA=compute();document.body.classList.toggle("public",PUBLIC);renderNR();
   document.getElementById("evTitle").textContent="Evento de "+EV;
   document.getElementById("evSub").innerHTML=`<span class="srcdot ${SRC==="planilha"?"on":SRCMSG.startsWith("Conectando")?"":"err"}"></span>`+esc(SRC==="planilha"?`Planilha Google · lida às ${LIDO} · atualiza a cada minuto`:SRCMSG);
@@ -1054,16 +1113,79 @@ async function lerPlanilha(manual){
 }
 
 // ---- controles ----
+// ---- Calendário Situacional ----
+const MESES=["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
+const MES_C=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+let CAL_S={};
+function resumoDias(){
+  const keep=EV,S={};
+  [...new Set(ALL.map(r=>r.ev))].forEach(e=>{const k=dkey(e);if(!k)return;EV=e;const L=compute();
+    if(L.length)S[k]={ev:e,g:L[0].g,n:L.length,list:L.map(o=>({mun:o.mun,g:o.g,idx:o.idx}))}});
+  EV=keep;return S;
+}
+function rotuloDia(s){return `${s.ev}: ${s.g==="obs"?"com ocorrências, abaixo do grau 1":GL[s.g]}; ${s.n} ${s.n>1?"municípios":"município"} (${s.list.map(o=>o.mun).join(", ")}). Abrir o painel deste dia`}
+function renderCal(){
+  const grid=document.getElementById("calGrid");if(!grid)return;
+  esconderCalTip();
+  CAL_S=resumoDias();
+  const now=new Date(),hk=now.getFullYear()*10000+(now.getMonth()+1)*100+now.getDate(),cur=dkey(EV);
+  const ks=Object.keys(CAL_S).map(Number);
+  const mk=k=>Math.floor(k/10000)*12+Math.floor(k/100)%100-1;
+  const ini=ks.length?Math.min(...ks.map(mk)):mk(hk),fim=Math.max(mk(hk),...ks.map(mk));
+  let h="";
+  for(let t=ini;t<=fim;t++){
+    const y=Math.floor(t/12),m=t%12,first=new Date(y,m,1).getDay(),dias=new Date(y,m+1,0).getDate();
+    let cells="",nImp=0;
+    for(let i=0;i<first;i++)cells+=`<span class="cd pad" aria-hidden="true"></span>`;
+    for(let d=1;d<=dias;d++){
+      const k=y*10000+(m+1)*100+d,s=CAL_S[k],cls=["cd"];
+      if(k===hk)cls.push("hoje");if(k>hk)cls.push("fut");
+      if(s){nImp++;cls.push(s.g);if(k===cur)cls.push("cur");
+        cells+=`<button type="button" class="${cls.join(" ")}" data-k="${k}" aria-label="${esc(rotuloDia(s))}"><b>${d}</b><small>${s.n}<span class="u"> mun.</span></small></button>`}
+      else cells+=`<span class="${cls.join(" ")} none"${k===hk?' title="Hoje"':""}><b>${d}</b></span>`;
+    }
+    h+=`<section class="calm"><header><h3>${MESES[m]} ${y}</h3><span>${nImp?nImp+(nImp>1?" dias":" dia")+" com impacto":"sem impacto registrado"}</span></header>
+      <div class="calw" aria-hidden="true"><span>DOM</span><span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SAB</span></div>
+      <div class="cald">${cells}</div></section>`;
+  }
+  grid.innerHTML=h;
+  const yi=Math.floor(ini/12),yf=Math.floor(fim/12);
+  const per=ini===fim?`${MES_C[ini%12]}/${yi}`:`${MES_C[ini%12]}/${yi} a ${MES_C[fim%12]}/${yf}`;
+  document.getElementById("calSub").textContent=`${per} · ${ks.length} ${ks.length===1?"dia":"dias"} com impacto`;
+}
+function tipCalHTML(s){const max=14;
+  return `<div class="tt-h"><b>${esc(s.ev)}</b><span class="chip ${s.g}">${s.g==="obs"?"Abaixo do grau 1":GL[s.g]}</span></div>
+  <ul>${s.list.slice(0,max).map(o=>`<li><i style="background:${col(o.g)}"></i><span>${esc(o.mun)}</span><em>${o.g==="obs"?"abaixo do grau 1":GL[o.g]}</em></li>`).join("")}</ul>
+  ${s.list.length>max?`<p>+ ${s.list.length-max} municípios</p>`:""}<p>Clique para abrir o painel deste dia</p>`}
+function mostrarCalTip(b){const s=CAL_S[b.dataset.k];if(!s)return;const t=document.getElementById("calTip");
+  t.innerHTML=tipCalHTML(s);t.hidden=false;
+  const r=b.getBoundingClientRect(),w=t.offsetWidth,hh=t.offsetHeight;
+  const x=Math.max(8,Math.min(r.left+r.width/2-w/2,innerWidth-w-8));let y=r.top-hh-8;if(y<8)y=r.bottom+8;
+  t.style.left=x+"px";t.style.top=y+"px"}
+function esconderCalTip(){const t=document.getElementById("calTip");if(t)t.hidden=true}
+function abrirDia(k){const s=CAL_S[k];if(!s)return;esconderCalTip();
+  EV=s.ev;DRILL=null;const o=compute()[0];SEL=o?o.mun:SEL;showTab("painel");render();
+  document.getElementById("evTitle").scrollIntoView({behavior:"smooth",block:"start"})}
+(function(){const g=document.getElementById("calGrid");
+  g.addEventListener("mouseover",e=>{const b=e.target.closest("button.cd");if(b)mostrarCalTip(b)});
+  g.addEventListener("mouseout",e=>{const b=e.target.closest("button.cd");if(b&&!b.contains(e.relatedTarget))esconderCalTip()});
+  g.addEventListener("focusin",e=>{const b=e.target.closest("button.cd");if(b)mostrarCalTip(b)});
+  g.addEventListener("focusout",esconderCalTip);
+  g.addEventListener("click",e=>{const b=e.target.closest("button.cd");if(b)abrirDia(+b.dataset.k)});
+  addEventListener("scroll",esconderCalTip,{passive:true});})();
+
 function setPressed(on,off){on.setAttribute("aria-pressed","true");off.setAttribute("aria-pressed","false")}
 const vg=document.getElementById("vGestor"),vp=document.getElementById("vPublico");
 vg.onclick=()=>{PUBLIC=false;setPressed(vg,vp);render()};
 vp.onclick=()=>{PUBLIC=true;setPressed(vp,vg);if(!document.getElementById("vwForm").hidden)showTab("painel");render()};
 document.getElementById("btnAtual").onclick=()=>lerPlanilha(true);
-const tP=document.getElementById("tPainel"),tF=document.getElementById("tForm"),tA=document.getElementById("tAxr"),tI=document.getElementById("tIcr");
+const tP=document.getElementById("tPainel"),tF=document.getElementById("tForm"),tA=document.getElementById("tAxr"),tI=document.getElementById("tIcr"),tC=document.getElementById("tCal");
 function showTab(t){document.getElementById("vwPainel").style.display=t==="painel"?"grid":"none";document.getElementById("vwForm").hidden=t!=="form";
-  document.getElementById("vwAxr").hidden=t!=="axr";document.getElementById("vwIcr").hidden=t!=="icr";
+  document.getElementById("vwAxr").hidden=t!=="axr";document.getElementById("vwIcr").hidden=t!=="icr";document.getElementById("vwCal").hidden=t!=="cal";if(t!=="cal")esconderCalTip();
+  tC.setAttribute("aria-selected",t==="cal");
   tP.setAttribute("aria-selected",t==="painel");tF.setAttribute("aria-selected",t==="form");tA.setAttribute("aria-selected",t==="axr");tI.setAttribute("aria-selected",t==="icr")}
 tP.onclick=()=>showTab("painel");
+tC.onclick=()=>{showTab("cal");renderCal()};
 tF.onclick=()=>showTab("form");
 tA.onclick=()=>{showTab("axr");setAxrView(AXR_VIEW)};
 tI.onclick=()=>{ICR_MUN=DATA.some(o=>o.mun===SEL)?SEL:ICR_MUN;showTab("icr");renderIcr()};
