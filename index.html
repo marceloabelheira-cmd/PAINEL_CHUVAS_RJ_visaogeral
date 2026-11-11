@@ -378,8 +378,41 @@ button.cd:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .caltip li i{width:10px;height:10px;border-radius:3px;flex:none}
 .caltip li em{margin-left:auto;padding-left:10px;font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}
 .caltip p{margin:6px 0 0;color:var(--muted);font-size:12px}
+/* ---- Outros produtos ---- */
+.tabs .prodlink{margin:0 0 0 auto;align-self:center;display:inline-flex;align-items:center;gap:5px;border:0;border-radius:6px;background:transparent;
+  color:var(--muted);font:500 12px var(--f-body);letter-spacing:.01em;padding:4px 6px;cursor:pointer;opacity:.6;white-space:nowrap}
+.tabs .prodlink:hover,.tabs .prodlink:focus-visible{opacity:1;color:var(--accent)}
+.tabs .prodlink[aria-pressed="true"]{opacity:1;color:var(--fg)}
+.tabs .prodlink svg{width:11px;height:11px;flex:none}
+.prod-grp{display:grid;gap:10px}
+.prod-grp h3{display:flex;align-items:center;gap:8px;font:700 14px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:4px 0 0}
+.prod-grp h3 i{width:10px;height:10px;border-radius:3px;background:var(--pc)}
+.prod-list{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+a.prod{position:relative;display:flex;flex-direction:column;gap:3px;min-width:0;background:var(--panel);color:var(--fg);text-decoration:none;
+  border:1px solid var(--line);border-left:4px solid var(--pc);border-radius:10px;padding:12px 14px;transition:box-shadow .12s ease,border-color .12s ease}
+a.prod:hover{border-color:var(--accent);border-left-color:var(--pc);box-shadow:0 4px 14px rgba(10,20,45,.14)}
+a.prod:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+a.prod b{font:700 17px var(--f-display);letter-spacing:.01em}
+a.prod.aqui b{padding-right:84px}
+a.prod span{font-size:13.5px;color:var(--muted)}
+a.prod code{margin-top:auto;padding-top:6px;font:400 11.5px var(--f-mono);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a.prod em{position:absolute;top:10px;right:10px;font:600 11px var(--f-display);letter-spacing:.08em;text-transform:uppercase;font-style:normal;
+  color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 8px}
+@media (prefers-reduced-motion:reduce){a.prod{transition:none}}
+a.prod-fe{display:flex;align-items:center;gap:18px;padding:16px 20px;border-radius:12px;text-decoration:none;color:#fff;min-width:0;
+  background:linear-gradient(100deg,var(--navy) 0%,#2a3a7a 100%);border:1px solid var(--navy);border-left:6px solid var(--orange);
+  box-shadow:0 4px 14px rgba(10,20,45,.18);transition:box-shadow .12s ease,transform .12s ease}
+a.prod-fe:hover{box-shadow:0 10px 24px rgba(10,20,45,.3);transform:translateY(-1px)}
+a.prod-fe:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+a.prod-fe img{width:76px;height:76px;border-radius:50%;flex:none;background:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.9)}
+a.prod-fe .tx{display:flex;flex-direction:column;gap:4px;min-width:0}
+a.prod-fe small{font:700 11.5px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:#ffb38a}
+a.prod-fe b{font:700 clamp(19px,2.3vw,26px)/1.15 var(--f-display);letter-spacing:.01em}
+a.prod-fe code{font:400 12px var(--f-mono);color:rgba(255,255,255,.72);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-spacing:.1em;text-transform:uppercase;background:#fff;color:var(--navy);border-radius:8px;padding:9px 16px}
+@media (max-width:600px){a.prod-fe{gap:12px;padding:14px}a.prod-fe img{width:56px;height:56px}a.prod-fe .go{display:none}}
+@media (prefers-reduced-motion:reduce){a.prod-fe{transition:none}a.prod-fe:hover{transform:none}}
 </style>
-
 </head>
 <body>
 <header class="bar">
@@ -422,6 +455,7 @@ button.cd:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     <button role="tab" id="tAxr" aria-selected="false">Matriz AxR</button>
     <button role="tab" id="tCal" aria-selected="false">Calendário Situacional</button>
     <button role="tab" id="tForm" class="pub-hide" aria-selected="false">Registrar ocorrência</button>
+    <button type="button" class="prodlink pub-hide" id="tProd" aria-pressed="false" title="Outros produtos: sites, painéis e dashboards"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="0" y="0" width="5" height="5" rx="1" fill="currentColor"/><rect x="7" y="0" width="5" height="5" rx="1" fill="currentColor"/><rect x="0" y="7" width="5" height="5" rx="1" fill="currentColor"/><rect x="7" y="7" width="5" height="5" rx="1" fill="currentColor"/></svg>outros produtos</button>
   </nav>
 
   <div id="vwPainel" style="display:grid;gap:14px">
@@ -545,6 +579,23 @@ button.cd:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     <p class="foot" style="text-align:left;margin:0">A cor do dia segue o maior grau entre os municípios. O número abaixo do dia é a quantidade de municípios com ocorrência, em qualquer grau. Clique no dia para abrir o painel daquele evento.</p>
   </div>
   <div class="caltip" id="calTip" role="tooltip" hidden></div>
+
+  <div id="vwProd" class="axr-wrap" hidden>
+    <section class="panel icr-bar">
+      <div><h2 style="font-size:22px">Sites, painéis e dashboards</h2><span class="lbl">14 produtos · abrem em nova aba</span></div>
+      <button type="button" class="xbtn" id="prodVoltar">‹ Voltar ao painel</button>
+    </section>
+    <a class="prod-fe" href="https://analistadegeoinformacao.github.io/painel-fe-sedec-rj/#amb=sisgeo" target="_blank" rel="noopener">
+      <img id="prodFeLogo" alt="Força Especializada · SEDEC-RJ" width="76" height="76">
+      <span class="tx"><small>Destaque</small><b>Painel Integrado · Força Especializada da <span style="white-space:nowrap">SEDEC-RJ</span></b><code>analistadegeoinformacao.github.io/painel-fe-sedec-rj ↗</code></span>
+      <span class="go" aria-hidden="true">Abrir ›</span>
+    </a>
+<section class="prod-grp" style="--pc:#24408f"><h3><i></i>Chuvas</h3><div class="prod-list"><a class="prod aqui" href="https://marceloabelheira-cmd.github.io/PAINEL_CHUVAS_RJ_visaogeral/" target="_blank" rel="noopener"><b>Painel de Chuvas</b><span>Municípios com impactos significativos (Matriz ICR) a partir de outubro de 2026</span><code>/PAINEL_CHUVAS_RJ_visaogeral ↗</code><em>este painel</em></a><a class="prod" href="https://marceloabelheira-cmd.github.io/ESCALAv4/" target="_blank" rel="noopener"><b>Chuvas · nov/25 a abr/26</b><span>Municípios com impactos significativos (Matriz ICR)</span><code>/ESCALAv4 ↗</code></a><a class="prod" href="https://marceloabelheira-cmd.github.io/PAINEL_SEeAJUDAHUMANITARIA_chuvas2025.2026/" target="_blank" rel="noopener"><b>Chuvas · nov/25 a abr/26</b><span>Municípios com Situação de Emergência e/ou Ajuda Humanitária</span><code>/PAINEL_SEeAJUDAHUMANITARIA_chuvas2025.2026 ↗</code></a></div></section>
+<section class="prod-grp" style="--pc:#e2571e"><h3><i></i>Incêndios florestais</h3><div class="prod-list"><a class="prod" href="https://marceloabelheira-cmd.github.io/IF2025/#2026" target="_blank" rel="noopener"><b>Incêndios Florestais · 2025 e 2026</b><span>Quantitativo por dia e eventos significativos (Matriz ICR)</span><code>/IF2025/#2026 ↗</code></a><a class="prod" href="https://marceloabelheira-cmd.github.io/IF_somenteem2025/" target="_blank" rel="noopener"><b>Incêndios Florestais · GIGR 2025</b><span>Quantitativo por dia e eventos significativos (Matriz ICR)</span><code>/IF_somenteem2025 ↗</code></a></div></section>
+<section class="prod-grp" style="--pc:#2e7d4f"><h3><i></i>Planos e prevenção</h3><div class="prod-list"><a class="prod" href="https://marceloabelheira-cmd.github.io/PLANCON_IF_2026/" target="_blank" rel="noopener"><b>PLANCON SEIF · 2026</b><span>Secas, Estiagens e Incêndios Florestais</span><code>/PLANCON_IF_2026 ↗</code></a><a class="prod" href="https://marceloabelheira-cmd.github.io/PLANCON_animais_PlanoPratico/" target="_blank" rel="noopener"><b>PLANCON Animais · 2026</b><span>Plano de contingência</span><code>/PLANCON_animais_PlanoPratico ↗</code></a><a class="prod" href="https://marceloabelheira-cmd.github.io/SEDEC_acoesdeprevencao.preparacao_GRAC.e.outros/" target="_blank" rel="noopener"><b>Ações Preventivas · Histórico</b><span>Incêndios Florestais (GIGR 2025) e Chuvas</span><code>/SEDEC_acoesdeprevencao.preparacao_GRAC.e.outros ↗</code></a></div></section>
+<section class="prod-grp" style="--pc:#0f7c8a"><h3><i></i>Comitê El Niño</h3><div class="prod-list"><a class="prod" href="https://marceloabelheira-cmd.github.io/COMITE_ELNINO_PORTAL/" target="_blank" rel="noopener"><b>Portal El Niño</b><span>Versão do Comitê</span><code>/COMITE_ELNINO_PORTAL ↗</code></a><a class="prod" href="https://marceloabelheira-cmd.github.io/COMITE_ELNINO_PORTAL_versaopublica/" target="_blank" rel="noopener"><b>Portal El Niño</b><span>Versão pública</span><code>/COMITE_ELNINO_PORTAL_versaopublica ↗</code></a><a class="prod" href="https://marceloabelheira-cmd.github.io/COMITE_ELNINO_ReunioesPlenarias/" target="_blank" rel="noopener"><b>Comitê El Niño · Reuniões Plenárias</b><span>Relatórios consolidados</span><code>/COMITE_ELNINO_ReunioesPlenarias ↗</code></a></div></section>
+<section class="prod-grp" style="--pc:#8a5a00"><h3><i></i>Outras matrizes ICR</h3><div class="prod-list"><a class="prod" href="https://marceloabelheira-cmd.github.io/PAINEL_EXCESSODECALOR_MatrizICR/" target="_blank" rel="noopener"><b>Excesso de Calor</b><span>Municípios com impactos significativos (Matriz ICR) · em estudo</span><code>/PAINEL_EXCESSODECALOR_MatrizICR ↗</code></a><a class="prod" href="https://marceloabelheira-cmd.github.io/MATRIZICR_desastrestecnologicosRio_dashboard/" target="_blank" rel="noopener"><b>Desastres Tecnológicos · município do Rio de Janeiro</b><span>Eventos significativos de 2011 a 2025 (Matriz ICR)</span><code>/MATRIZICR_desastrestecnologicosRio_dashboard ↗</code></a></div></section>
+  </div>
 
   <div id="vwForm" class="formgrid" hidden>
     <section class="panel" style="display:grid;gap:12px">
@@ -726,8 +777,21 @@ const SHEET_URL="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/edit";
 const FORM_URL="https://docs.google.com/forms/d/1eDrK8Bqld0GtqSVdjbHgTxlQE8HtJ-jsvxCZExVRAjc/viewform";
 const EV_BASE="03/10/2026";
 BASE.forEach(r=>{r.tl=CRITS[r.c].t[r.t][0];r.w=CRITS[r.c].t[r.t][1];r.ev=EV_BASE});
-let SEL="Sumidouro",PUBLIC=false,ALL=BASE.slice(),EV=EV_BASE,SRC="embutido",SRCMSG="Conectando à planilha…",LIDO=null,VALS={[EV_BASE]:VALID},RED={};
+let SEL="Sumidouro",PUBLIC=false,ALL=BASE.slice(),EV=EV_BASE,SRC="embutido",SRCMSG="Conectando à planilha… Enquanto isso, mostrando os dados embutidos de 03/10.",LIDO=null,VALS={[EV_BASE]:VALID},RED={};
 const recs=()=>ALL.filter(r=>r.ev===EV);
+// ---- Graus informados pela equipe (tabela histórica de maio a setembro de 2026, sem detalhamento por critério) ----
+// [Evento, Município, grau, tipo de evento]. Se o município tiver registros detalhados no mesmo dia, valem os registros.
+const HIST=[
+  ["20/05/2026","Nova Friburgo","g1","Chuvas Intensas"],["20/05/2026","Petrópolis","g1","Chuvas Intensas"],
+  ["15/06/2026","Rio de Janeiro","g1","Chuvas Intensas"],
+  ["29/07/2026","Rio de Janeiro","g2","Vendaval"],["29/07/2026","Duque de Caxias","g1","Vendaval"],["29/07/2026","São João de Meriti","g1","Vendaval"],
+  ["29/07/2026","Mesquita","g1","Vendaval"],["29/07/2026","Nova Iguaçu","g1","Vendaval"],["29/07/2026","Queimados","g1","Vendaval"],["29/07/2026","Japeri","g1","Vendaval"],
+  ["14/08/2026","Macuco","g1","Chuvas"],
+  ["31/08/2026","Petrópolis","g1","Chuvas"],
+  ["15/09/2026","Petrópolis","g1","Granizo e Vendaval"],
+  ["30/09/2026","Barra Mansa","g1","Chuvas Intensas"],["30/09/2026","Teresópolis","g1","Chuvas Intensas"]
+];
+const eventos=()=>[...new Set(ALL.map(r=>r.ev).concat(HIST.map(h=>h[0])))];
 
 function compute(){
   const by={};
@@ -741,6 +805,8 @@ function compute(){
     o.g=o.n3>=MINCRIT?"g3":o.n2>=MINCRIT?"g2":o.n>=MINCRIT?"g1":"obs";
     const v=(VALS[EV]||{})[o.mun];o.vg=v?v.g:null;
     o.dh=sumT(o.mun,9,[0]);o.db=sumT(o.mun,9,[1]);return o});
+  HIST.filter(h=>h[0]===EV&&!by[h[1]]).forEach(([,mun,g,tipo])=>list.push({mun,hist:tipo,g,vg:null,pts:Array(10).fill(0),mw:Array(10).fill(0),
+    rows:Array.from({length:10},()=>[]),lv:Array(10).fill(0),n:0,idx:0,tp:0,n2:0,n3:0,dh:0,db:0}));
   const gr={g3:3,g2:2,g1:1,obs:0};
   return list.sort((a,b)=>gr[b.g]-gr[a.g]||b.idx-a.idx||b.n-a.n||b.tp-a.tp);
 }
@@ -794,7 +860,7 @@ const tip=document.getElementById("tip");let DATA=[];
 MUNIS.forEach(m=>{const p=document.createElementNS(NS,"path");p.setAttribute("d",m.d);gP.appendChild(p);pathBy[m.n]=p;
   p.addEventListener("click",()=>goDetail(m.n));
   p.addEventListener("mousemove",e=>{const o=DATA.find(x=>x.mun===m.n);const box=svg.parentElement.getBoundingClientRect();
-    tip.innerHTML=`<b style="font:600 16px var(--f-display)">${m.n}</b><br>`+(o?`<span class="chip ${o.g}">${GL[o.g]}</span> ${DATA.indexOf(o)+1}º no ranking · índice ${o.idx}/30`:`<span style="color:var(--muted)">Sem registro</span>`);
+    tip.innerHTML=`<b style="font:600 16px var(--f-display)">${m.n}</b><br>`+(o?`<span class="chip ${o.g}">${GL[o.g]}</span> ${DATA.indexOf(o)+1}º no ranking · ${o.hist?"grau informado":"índice "+o.idx+"/30"}`:`<span style="color:var(--muted)">Sem registro</span>`);
     tip.hidden=false;let x=e.clientX-box.left+14,y=e.clientY-box.top+14;if(x>box.width-260)x-=270;tip.style.left=x+"px";tip.style.top=y+"px"});
   p.addEventListener("mouseleave",()=>tip.hidden=true)});
 
@@ -821,7 +887,7 @@ function render(){
   DATA.forEach((o,i)=>{if(o.g!==last){h+=`<div class="rsep">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</div>`;last=o.g}
     h+=`<button class="ritem ${o.mun===SEL?"sel":""}" data-m="${esc(o.mun)}"><span class="pos">${i+1}</span>
     <span style="min-width:0"><span class="nm">${esc(o.mun)}</span><span class="rg">REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><span class="ibar"><i style="width:${o.idx/30*100}%"></i></span></span>
-    <span class="rside"><span class="chip ${o.g}">${GL[o.g]}</span><small class="mono">índice ${o.idx}/30 · ${o.n}/10</small><span class="more">Ver detalhes ›</span></span></button>`});
+    <span class="rside"><span class="chip ${o.g}">${GL[o.g]}</span><small class="mono">${o.hist?"grau informado":`índice ${o.idx}/30 · ${o.n}/10`}</small><span class="more">Ver detalhes ›</span></span></button>`});
   const rk=document.getElementById("rank");rk.innerHTML=h||`<p class="empty">Nenhum registro confirmado ainda. Use a aba Registrar ocorrência.</p>`;
   rk.querySelectorAll(".ritem").forEach(b=>b.onclick=()=>goDetail(b.dataset.m));
   renderDetail();renderMatrix();renderBars();renderRedec();renderRegList();if(AXR_VIEW==="cl")renderAxrClassica();else renderAxr();renderIcr();
@@ -841,7 +907,7 @@ function renderDrill(){
   el.innerHTML=`<div class="drill-h"><h2>${esc(title)}</h2><button type="button" class="xbtn" id="dClose">Fechar</button></div>
     ${rows.length?`<div class="dlist">${rows.map(x=>`<button type="button" class="drow" data-m="${esc(x.o.mun)}"><span class="p">${DATA.indexOf(x.o)+1}</span>
       <span class="mid"><span class="n">${esc(x.o.mun)}</span><span class="chip ${x.o.g}" style="font-size:11px;padding:1px 6px">${GL[x.o.g]}</span><span class="bar"><i style="width:${x.v/mx*100}%"></i></span></span>
-      <span class="v">${x.v}<small style="font-size:13px;color:var(--muted)">${x.u||""}</small></span></button>`).join("")}</div>`:`<p class="empty">${empty}</p>`}
+      <span class="v">${x.o.hist&&x.u?`<small style="font-size:12px;color:var(--muted)">grau informado</small>`:`${x.v}<small style="font-size:13px;color:var(--muted)">${x.u||""}</small>`}</span></button>`).join("")}</div>`:`<p class="empty">${empty}</p>`}
     <span class="lbl">Clique em um município para ver o detalhamento dos impactos</span>`;
   el.hidden=false;
   el.querySelector("#dClose").onclick=()=>{DRILL=null;render()};
@@ -880,7 +946,8 @@ function renderAxr(){
   const so=document.getElementById("axrSo").checked;
   const rs=recs().filter(r=>r.ok);
   const nm=new Set(rs.map(r=>r.mun)).size;
-  document.getElementById("axrSub").textContent=`Evento de ${EV} · ${nm} municípios com registro · ${CRITS.reduce((a,c)=>a+c.t.filter(x=>!OCULTOS.has(x[0])).length,0)} atividades`;
+  const nh=HIST.filter(h=>h[0]===EV&&!rs.some(r=>r.mun===h[1])).length;
+  document.getElementById("axrSub").textContent=`Evento de ${EV} · ${nm} municípios com registro · ${CRITS.reduce((a,c)=>a+c.t.filter(x=>!OCULTOS.has(x[0])).length,0)} atividades`+(nh?` · ${nh} município${nh>1?"s":""} com grau informado, sem detalhamento`:"");
   const cols=INST.length+3;
   let h=`<thead><tr><th class="act">Ocorrência / atividade</th><th>Total ERJ</th><th>Mun.</th>${INST.map(i=>`<th title="${esc(i[2])}">${i[1]}</th>`).join("")}</tr></thead><tbody>`;
   CRITS.forEach((cr,c)=>{
@@ -952,8 +1019,9 @@ function renderIcr(){
   const html=`<option value="">Nenhum (só a escala)</option>`+DATA.map((o,i)=>`<option value="${esc(o.mun)}"${o.mun===ICR_MUN?" selected":""}>${i+1}º ${esc(o.mun)} · ${GL[o.g]}</option>`).join("");
   if(sel.innerHTML!==html)sel.innerHTML=html;sel.value=ICR_MUN;
   const o=DATA.find(x=>x.mun===ICR_MUN);
-  document.getElementById("icrSub").textContent=o?`Evento de ${EV} · ${o.mun}: ${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}`:`Evento de ${EV}`;
-  t.className="icrt"+(o?" foco":"");
+  const oh=!!(o&&o.hist);
+  document.getElementById("icrSub").textContent=o?`Evento de ${EV} · ${o.mun}: ${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}${oh?" · grau informado, sem detalhamento por critério":""}`:`Evento de ${EV}`;
+  t.className="icrt"+(o&&!oh?" foco":"");
   let h=`<thead><tr><th class="logo" colspan="2" rowspan="4"><img src="${document.querySelector('.logo-dc').src}" alt="Defesa Civil RJ"><img class="fe" src="${document.querySelector('.logo-fe').src}" alt="Força Especializada SEDEC-RJ"></th>
     <th class="t1" colspan="3">ESCALA DE IMPACTOS · <small>MATRIZ DE IDENTIFICAÇÃO, CLASSIFICAÇÃO E REGISTRO DE INCIDENTES RELEVANTES E/OU DESASTRES</small></th></tr>
     <tr><th class="t2" colspan="3">Matriz ICR-S2ID para Incidentes ou Desastres NATURAIS · grupo "Meteorológicos" · subgrupo "Tempestades" · Chuvas Intensas</th></tr>
@@ -962,7 +1030,7 @@ function renderIcr(){
   ICR_REF.forEach((r,j)=>{const lv=o?o.lv[j]:0;
     h+=`<tr><td class="n${lv?" hit":""}">${j+1}</td><td class="k">${r[0]}<em>FONTE: ${r[1]}</em></td>
       ${[1,2,3].map(n=>`<td class="v c${n}${lv===n?" hit":""}">${r[1+n]}${lv===n?`<span class="ok">✓ atingido</span>`:""}</td>`).join("")}</tr>`});
-  if(o)h+=`<tr class="sum"><td colspan="2">Critérios atingidos por ${esc(o.mun)} (nível ou acima)</td>
+  if(o&&!oh)h+=`<tr class="sum"><td colspan="2">Critérios atingidos por ${esc(o.mun)} (nível ou acima)</td>
     <td class="${o.g==="g1"?"win":""}">${o.n} critério${o.n===1?"":"s"}${o.n>=5?" ✓":""}</td><td class="${o.g==="g2"?"win":""}">${o.n2} critério${o.n2===1?"":"s"}${o.n2>=5?" ✓":""}</td><td class="${o.g==="g3"?"win":""}">${o.n3} critério${o.n3===1?"":"s"}${o.n3>=5?" ✓":""}</td></tr>`;
   t.innerHTML=h+"</tbody>";
 }
@@ -972,6 +1040,9 @@ function renderDetail(){
   const el=document.getElementById("detail");const o=DATA.find(x=>x.mun===SEL);
   if(!o){el.innerHTML=`<div class="dhead"><h3>${esc(SEL)}</h3><div class="dmeta"><span class="chip none">Sem registro</span>${botaoAtualizar(SEL,true)}</div></div><p style="color:var(--muted);margin:0">Nenhuma ocorrência confirmada para este município. Clique em um município do mapa ou do ranking.</p>`;return}
   const pos=DATA.indexOf(o)+1,note=EV===EV_BASE?NOTES[o.mun]:"";
+  if(o.hist){el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
+    <div class="dmeta">${botaoAtualizar(o.mun,true)}<span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span></div></div>
+    <div class="note">Grau informado pela equipe na tabela histórica · evento: ${esc(o.hist)}. Este registro não traz o detalhamento por critério, por isso a Matriz ICR e a Matriz AxR não mostram critérios para ele.</div>`;return}
   el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º mais impactado · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
     <div class="dmeta">${botaoAtualizar(o.mun,false)}<span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span>
     ${o.vg&&o.vg!==o.g?`<span class="chip ghost pub-hide" title="Grau informado na aba Validação da planilha">Validação da equipe: ${GL[o.vg]}</span>`:""}</div></div>
@@ -989,7 +1060,7 @@ function renderDetail(){
 function renderMatrix(){
   const t=document.getElementById("mtx");
   t.innerHTML=`<tr><th class="mn">Município</th>${CRITS.map(c=>`<th title="${c.n}">${c.n}</th>`).join("")}<th>Índice</th><th>Grau</th></tr>`+
-   DATA.map(o=>`<tr><td class="mn" data-m="${esc(o.mun)}">${esc(o.mun)}</td>${o.lv.map((l,j)=>`<td class="l${l}" title="${CRITS[j].n}: peso ${l} (${o.pts[j]} pts de quantidade × peso)">${l||""}</td>`).join("")}<td class="gr mono">${o.idx}</td><td class="gr"><span class="chip ${o.g}">${GL[o.g]}</span></td></tr>`).join("");
+   DATA.map(o=>`<tr><td class="mn" data-m="${esc(o.mun)}"${o.hist?' title="Grau informado, sem detalhamento por critério"':""}>${esc(o.mun)}${o.hist?' <small style="font:500 11px var(--f-body);color:var(--muted)">· grau informado</small>':""}</td>${o.lv.map((l,j)=>`<td class="l${l}" title="${CRITS[j].n}: peso ${l} (${o.pts[j]} pts de quantidade × peso)">${l||""}</td>`).join("")}<td class="gr mono">${o.hist?"—":o.idx}</td><td class="gr"><span class="chip ${o.g}">${GL[o.g]}</span></td></tr>`).join("");
   t.querySelectorAll("td.mn").forEach(td=>td.onclick=()=>{SEL=td.dataset.m;render();document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"nearest"})});
 }
 
@@ -1005,7 +1076,7 @@ function renderRedec(){
   document.getElementById("redecN").textContent=`${keys.length} regiões`;
   document.getElementById("redecs").innerHTML=keys.map(k=>`<div class="rd"><h3>REDEC ${k}</h3><ul>${groups[k].map(o=>{
     const it=recs().filter(r=>r.ok&&r.mun===o.mun).map(r=>`${r.q>1?r.q+" × ":""}${r.tl.toLowerCase()}`).join(" · ");
-    return `<li><b data-m="${esc(o.mun)}">${esc(o.mun)}</b> <span class="chip ${o.g}" style="font-size:11px;padding:1px 6px">${GL[o.g]}</span><p>${esc(it)}</p></li>`}).join("")}</ul></div>`).join("")||`<p class="empty">Sem registros.</p>`;
+    return `<li><b data-m="${esc(o.mun)}">${esc(o.mun)}</b> <span class="chip ${o.g}" style="font-size:11px;padding:1px 6px">${GL[o.g]}</span><p>${esc(it||(o.hist?"Grau informado · "+o.hist+" (sem detalhamento por critério)":""))}</p></li>`}).join("")}</ul></div>`).join("")||`<p class="empty">Sem registros.</p>`;
   document.querySelectorAll(".rd b[data-m]").forEach(b=>b.onclick=()=>{SEL=b.dataset.m;render();document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"nearest"})});
 }
 
@@ -1022,7 +1093,7 @@ function renderRegList(){
 }
 function renderEvSel(){
   const sel=document.getElementById("evSel");
-  const evs=[...new Set(ALL.map(r=>r.ev))].sort((a,b)=>dkey(b)-dkey(a));
+  const evs=eventos().sort((a,b)=>dkey(b)-dkey(a));
   const html=evs.map(e=>`<option value="${esc(e)}"${e===EV?" selected":""}>${esc(e)}</option>`).join("");
   if(sel.innerHTML!==html)sel.innerHTML=html;
 }
@@ -1095,21 +1166,24 @@ async function lerPlanilha(manual){
         :c==="tool_error"?"O Google Drive não abriu a planilha. Verifique se ela está compartilhada com você."
         :"A planilha não respondeu agora. Nova tentativa em 1 minuto."}}
   if(!csv&&!(window.claude&&MCP)){
-    try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=Registros`,{cache:"no-store"});
+    const ctl=new AbortController(),tmo=setTimeout(()=>ctl.abort(),25000);
+    try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=Registros`,{cache:"no-store",signal:ctl.signal});
       const t=r.ok?await r.text():"";if(t&&!/^\s*</.test(t))csv=t;else erro="Para este arquivo ler a planilha, ela precisa estar compartilhada como \"Qualquer pessoa com o link: leitor\"."}
-    catch(e){erro="Sem acesso à planilha neste momento."}}
-  const p=csv?rowsFromCSV(csv):null;
+    catch(e){erro=e&&e.name==="AbortError"?"A planilha demorou a responder. Nova tentativa em 1 minuto.":"Sem acesso à planilha neste momento."}
+    finally{clearTimeout(tmo)}}
+  let p=null;
+  try{p=csv?rowsFromCSV(csv):null}catch(e){erro="Não consegui ler os registros da planilha ("+(e&&e.message||e)+").";p=null}
   if(p&&p.out.length){
     ALL=p.out;VALS=p.vals;RED=p.red;FM=p.fm||{};if(p.nr&&p.nr.length)NRL=p.nr;SRC="planilha";
     LIDO=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-    const evs=[...new Set(ALL.map(r=>r.ev))];
+    const evs=eventos();
     if(!JA_LEU||!evs.includes(EV)){EV=evs.sort((a,b)=>dkey(b)-dkey(a))[0];DRILL=null;const o=compute()[0];SEL=o?o.mun:SEL}
     JA_LEU=true;
   }else{
     if(SRC!=="planilha"){SRCMSG=(erro||(csv?"A planilha ainda não tem registros válidos.":"Sem acesso à planilha."))+" Mostrando os dados embutidos de 03/10."}
     else if(manual&&erro){SRCMSG=erro}
   }
-  render();
+  try{render()}catch(e){const el=document.getElementById("evSub");if(el)el.textContent="Erro ao montar o painel: "+(e&&e.message||e);console.error(e)}
 }
 
 // ---- controles ----
@@ -1119,8 +1193,8 @@ const MES_C=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","
 let CAL_S={};
 function resumoDias(){
   const keep=EV,S={};
-  [...new Set(ALL.map(r=>r.ev))].forEach(e=>{const k=dkey(e);if(!k)return;EV=e;const L=compute();
-    if(L.length)S[k]={ev:e,g:L[0].g,n:L.length,list:L.map(o=>({mun:o.mun,g:o.g,idx:o.idx}))}});
+  eventos().forEach(e=>{const k=dkey(e);if(!k)return;EV=e;const L=compute();
+    if(L.length)S[k]={ev:e,g:L[0].g,n:L.length,hist:[...new Set(L.filter(o=>o.hist).map(o=>o.hist))].join(", "),list:L.map(o=>({mun:o.mun,g:o.g,idx:o.idx}))}});
   EV=keep;return S;
 }
 function rotuloDia(s){return `${s.ev}: ${s.g==="obs"?"com ocorrências, abaixo do grau 1":GL[s.g]}; ${s.n} ${s.n>1?"municípios":"município"} (${s.list.map(o=>o.mun).join(", ")}). Abrir o painel deste dia`}
@@ -1156,7 +1230,7 @@ function renderCal(){
 function tipCalHTML(s){const max=14;
   return `<div class="tt-h"><b>${esc(s.ev)}</b><span class="chip ${s.g}">${s.g==="obs"?"Abaixo do grau 1":GL[s.g]}</span></div>
   <ul>${s.list.slice(0,max).map(o=>`<li><i style="background:${col(o.g)}"></i><span>${esc(o.mun)}</span><em>${o.g==="obs"?"abaixo do grau 1":GL[o.g]}</em></li>`).join("")}</ul>
-  ${s.list.length>max?`<p>+ ${s.list.length-max} municípios</p>`:""}<p>Clique para abrir o painel deste dia</p>`}
+  ${s.list.length>max?`<p>+ ${s.list.length-max} municípios</p>`:""}${s.hist?`<p>Grau informado pela equipe (${esc(s.hist)}), sem detalhamento por critério</p>`:""}<p>Clique para abrir o painel deste dia</p>`}
 function mostrarCalTip(b){const s=CAL_S[b.dataset.k];if(!s)return;const t=document.getElementById("calTip");
   t.innerHTML=tipCalHTML(s);t.hidden=false;
   const r=b.getBoundingClientRect(),w=t.offsetWidth,hh=t.offsetHeight;
@@ -1177,15 +1251,18 @@ function abrirDia(k){const s=CAL_S[k];if(!s)return;esconderCalTip();
 function setPressed(on,off){on.setAttribute("aria-pressed","true");off.setAttribute("aria-pressed","false")}
 const vg=document.getElementById("vGestor"),vp=document.getElementById("vPublico");
 vg.onclick=()=>{PUBLIC=false;setPressed(vg,vp);render()};
-vp.onclick=()=>{PUBLIC=true;setPressed(vp,vg);if(!document.getElementById("vwForm").hidden)showTab("painel");render()};
+vp.onclick=()=>{PUBLIC=true;setPressed(vp,vg);if(!document.getElementById("vwForm").hidden||!document.getElementById("vwProd").hidden)showTab("painel");render()};
 document.getElementById("btnAtual").onclick=()=>lerPlanilha(true);
-const tP=document.getElementById("tPainel"),tF=document.getElementById("tForm"),tA=document.getElementById("tAxr"),tI=document.getElementById("tIcr"),tC=document.getElementById("tCal");
+const tPr=document.getElementById("tProd"),tP=document.getElementById("tPainel"),tF=document.getElementById("tForm"),tA=document.getElementById("tAxr"),tI=document.getElementById("tIcr"),tC=document.getElementById("tCal");
 function showTab(t){document.getElementById("vwPainel").style.display=t==="painel"?"grid":"none";document.getElementById("vwForm").hidden=t!=="form";
-  document.getElementById("vwAxr").hidden=t!=="axr";document.getElementById("vwIcr").hidden=t!=="icr";document.getElementById("vwCal").hidden=t!=="cal";if(t!=="cal")esconderCalTip();
+  document.getElementById("vwAxr").hidden=t!=="axr";document.getElementById("vwIcr").hidden=t!=="icr";document.getElementById("vwCal").hidden=t!=="cal";document.getElementById("vwProd").hidden=t!=="prod";tPr.setAttribute("aria-pressed",t==="prod");if(t!=="cal")esconderCalTip();
   tC.setAttribute("aria-selected",t==="cal");
   tP.setAttribute("aria-selected",t==="painel");tF.setAttribute("aria-selected",t==="form");tA.setAttribute("aria-selected",t==="axr");tI.setAttribute("aria-selected",t==="icr")}
 tP.onclick=()=>showTab("painel");
 tC.onclick=()=>{showTab("cal");renderCal()};
+tPr.onclick=()=>{showTab(document.getElementById("vwProd").hidden?"prod":"painel");scrollTo({top:0,behavior:"smooth"})};
+document.getElementById("prodVoltar").onclick=()=>showTab("painel");
+(function(){const a=document.querySelector("img.logo-fe"),b=document.getElementById("prodFeLogo");if(a&&b)b.src=a.src})();
 tF.onclick=()=>showTab("form");
 tA.onclick=()=>{showTab("axr");setAxrView(AXR_VIEW)};
 tI.onclick=()=>{ICR_MUN=DATA.some(o=>o.mun===SEL)?SEL:ICR_MUN;showTab("icr");renderIcr()};
@@ -1197,6 +1274,5 @@ render();
 lerPlanilha(false);
 setInterval(()=>{if(!document.hidden)lerPlanilha(false)},60000);
 </script>
-
 </body>
 </html>
