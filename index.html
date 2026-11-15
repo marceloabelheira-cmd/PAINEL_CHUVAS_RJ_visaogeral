@@ -432,6 +432,12 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
   background:var(--accent-soft);border-radius:999px;padding:3px 10px;text-decoration:none}
 .mlinks a:hover{text-decoration:underline}
 .crit ul a{color:var(--accent);font-weight:600}
+/* ---- Calendário: navegação por período de 6 meses ---- */
+.calnav{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:4px;max-width:100%}
+.calnav button{border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:6px;width:34px;height:32px;font:700 18px/1 var(--f-display);cursor:pointer;flex:none}
+.calnav button:disabled{opacity:.35;cursor:default}
+.calnav select{min-width:0;max-width:100%;font:600 15px var(--f-display);color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+@media (max-width:600px){.calnav{gap:4px}.calnav button{width:30px}}
 </style>
 </head>
 <body>
@@ -588,6 +594,11 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
   <div id="vwCal" class="axr-wrap" hidden>
     <section class="panel icr-bar">
       <div><h2 style="font-size:22px">Calendário Situacional de Impactos</h2><span class="lbl" id="calSub"></span></div>
+      <div class="calnav" role="group" aria-label="Período do calendário">
+        <button type="button" id="calPrev" aria-label="Período anterior">‹</button>
+        <select id="calPer" aria-label="Escolher período"></select>
+        <button type="button" id="calNext" aria-label="Próximo período">›</button>
+      </div>
       <div class="cal-leg" aria-label="Legenda do calendário">
         <span><i style="background:var(--panel);border:1px solid var(--line)"></i>Sem impacto</span>
         <span><i style="background:var(--obs)"></i>Com ocorrências, abaixo do grau 1</span>
@@ -802,16 +813,182 @@ BASE.forEach(r=>{r.tl=CRITS[r.c].t[r.t][0];r.w=CRITS[r.c].t[r.t][1];r.ev=EV_BASE
 let SEL="Sumidouro",PUBLIC=false,ALL=BASE.slice(),EV=EV_BASE,SRC="embutido",SRCMSG="Conectando à planilha… Enquanto isso, mostrando os dados embutidos de 03/10.",LIDO=null,VALS={[EV_BASE]:VALID},RED={};
 const recs=()=>ALL.filter(r=>r.ev===EV);
 // ---- Graus informados pela equipe (tabela histórica de maio a setembro de 2026, sem detalhamento por critério) ----
-// [Evento, Município, grau, tipo de evento]. Se o município tiver registros detalhados no mesmo dia, valem os registros.
+// [Evento, Município, grau, tipo de evento, descrição, matéria]. Se o município tiver registros detalhados no mesmo dia, valem os registros.
 const HIST=[
-  ["20/05/2026","Nova Friburgo","g1","Chuvas Intensas"],["20/05/2026","Petrópolis","g1","Chuvas Intensas"],
-  ["15/06/2026","Rio de Janeiro","g1","Chuvas Intensas"],
-  ["29/07/2026","Rio de Janeiro","g2","Vendaval"],["29/07/2026","Duque de Caxias","g1","Vendaval"],["29/07/2026","São João de Meriti","g1","Vendaval"],
-  ["29/07/2026","Mesquita","g1","Vendaval"],["29/07/2026","Nova Iguaçu","g1","Vendaval"],["29/07/2026","Queimados","g1","Vendaval"],["29/07/2026","Japeri","g1","Vendaval"],
-  ["14/08/2026","Macuco","g1","Chuvas"],
-  ["31/08/2026","Petrópolis","g1","Chuvas"],
-  ["15/09/2026","Petrópolis","g1","Granizo e Vendaval"],
-  ["30/09/2026","Barra Mansa","g1","Chuvas Intensas"],["30/09/2026","Teresópolis","g1","Chuvas Intensas"]
+  // novembro/2025 a abril/2026 (painel "Chuvas Intensas 2025/2026", ESCALAv4)
+  ["02/11/2025","Aperibé","g1","Chuvas Intensas","Alagamentos, casas atingidas e repercussão nas redes sociais",""],
+  ["04/11/2025","Cantagalo","g1","Cabeça d'água","Assustou moradores - repercussão na mídia",""],
+  ["08/11/2025","Rio de Janeiro","g1","Vendaval","Quedas de árvores - interdições de vias e queda de energia",""],
+  ["08/11/2025","Teresópolis","g1","Vendaval","Quedas de árvores - interdições de vias e queda de energia",""],
+  ["23/11/2025","Itaocara","g2","Vento, chuva e Granizo","Desabamento de telhado e outros impactos (árvores, alagamento etc)",""],
+  ["28/11/2025","Rio de Janeiro","g1","Chuvas Intensas","Bolsões, alagamentos e acionamento de sirenes · (Houve Ajuda Humanitária - SEDEC-RJ)",""],
+  ["02/12/2025","Rio das Ostras","g1","Chuvas Intensas","Queda de estrutura (galpão do Iate Clube) e queda de árvores",""],
+  ["03/12/2025","São Francisco de Itabapoana","g1","Chuvas Intensas","Quedas de árvores, destelhamento, obstrução de estradas",""],
+  ["15/12/2025","Bom Jardim","g1","Chuvas Intensas","Quedas de árvores, destelhamento, obstrução de estradas",""],
+  ["15/12/2025","Macuco","g1","Chuvas Intensas","Quedas de árvores, deslizamentos, alagamentos, desabrigados",""],
+  ["17/12/2025","Bom Jardim","g1","Chuvas Intensas","Quedas de árvores, deslizamentos",""],
+  ["17/12/2025","Duque de Caxias","g1","Chuvas Intensas","Sirene acionada, alagamentos",""],
+  ["17/12/2025","Petrópolis","g2","Chuvas Intensas","Cell Broadcast (4), 14 Sirenes acionadas, transbordamentos, carros arrastados",""],
+  ["17/12/2025","Rio de Janeiro","g1","Chuvas Intensas","Alagamentos, quedas de árvores, deslizamentos",""],
+  ["17/12/2025","Santa Maria Madalena","g1","Chuvas Intensas","Quedas de árvores, deslizamentos",""],
+  ["17/12/2025","Teresópolis","g1","Chuvas Intensas","Sirene acionada, quedas de árvores, deslizamentos",""],
+  ["02/01/2026","Casimiro de Abreu","g1","Chuvas Intensas","Quedas de árvores, destelhamento / desabamento",""],
+  ["02/01/2026","Cordeiro","g1","Chuvas Intensas","Quedas de árvores, interdições de vias",""],
+  ["02/01/2026","Santa Maria Madalena","g1","Chuvas Intensas","Quedas de árvores, deslizamentos, interdições de vias",""],
+  ["04/01/2026","Paraty","g1","Tromba D'água","Tromba D'água, transbordamento de rio, dano em estrada, repercussão na mídia",""],
+  ["04/01/2026","Petrópolis","g1","Chuvas Intensas","CELL BROADCAST, Sirenes Mobilizadas, Transbordamento, interdições de vias",""],
+  ["04/01/2026","Rio de Janeiro","g1","Chuvas Intensas","Bolsões/alagamentos, Quedas de árvores, Sirene Mobilizada, interdições de vias",""],
+  ["14/01/2026","Rio Claro","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA DECRETADA PELO PREFEITO · Enchentes, Alagamentos, Enxurradas - danos em imóveis (56) / Quedas de árvores / vias interditadas",""],
+  ["14/01/2026","São João de Meriti","g1","Chuvas Intensas","Queda de estrutura, chuva de granizo",""],
+  ["19/01/2026","Angra dos Reis","g1","Chuvas Intensas","CELL BROADCAST, Sirenes Mobilizadas, Deslizamento, Quedas de árvores",""],
+  ["19/01/2026","Duque de Caxias","g2","Chuvas Intensas","ALERTA MÁXIMO, CELL BROADCAST, grandes alagamentos, repercussão na mídia. Volume impressionante de 1h (139mm/h - Pantanal)",""],
+  ["19/01/2026","Itaguaí","g1","Chuvas Intensas","Alagamentos, interdições de imóveis (2 famílias desalojadas)",""],
+  ["19/01/2026","Mangaratiba","g1","Chuvas Intensas","Sirenes Mobilizadas (3), vias interdtadas",""],
+  ["19/01/2026","Nova Iguaçu","g1","Chuvas Intensas","Alagamentos (várias vias atingidas) e transbordamentos. Queda de telhado e família no Ponto de Apoio",""],
+  ["19/01/2026","Petrópolis","g1","Chuvas Intensas","Grande mobilização preventiva. Deslizamentos e quedas de árvores sem gravidade",""],
+  ["19/01/2026","Rio de Janeiro","g1","Chuvas Intensas","Alagamento, muitos bolsões (mais de 60), dezenas de quedas de árvores (cerca de 30)",""],
+  ["19/01/2026","Santa Maria Madalena","g2","Chuvas Intensas","Alagamentos, deslizamentos, vias obstruídas, desabrigados (13)",""],
+  ["23/01/2026","Barra Mansa","g1","Chuvas Intensas","CELL BROADCAST, Sirenes mobilizadas (Nova Esperança e Boa Sorte - inundação) e 2 Pontos de Apoio, 6 quedas de árvores, 7 pontos de deslizamentos (sendo 2 interdições), queda de poste e de muro. 9 desalojados",""],
+  ["23/01/2026","Rio de Janeiro","g1","Chuvas Intensas","Bolsões (18), quedas de árvore (14), deslizamentos (2), alguns desabamentos parciais (sem vítimas)",""],
+  ["25/01/2026","Japeri","g1","Chuvas Intensas","Deslizamentos em 3 pontos, Alagamentos em diferentes locais, desabrigados (3) e desalojados (4)",""],
+  ["29/01/2026","Nova Friburgo","g1","Chuvas Intensas","Alagamentos, deslizamentos, quedas de árvores, vias interditadas",""],
+  ["29/01/2026","Paty do Alferes","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA DECRETADA PELO PREFEITO · Alagamentos, vias interditadas, quedas de árvores, falta de energia, granizo",""],
+  ["29/01/2026","Petrópolis","g1","Chuvas Intensas","CELL BROADCAST, Sirenes Mobilizadas (6), Alagamentos, vias interditadas",""],
+  ["29/01/2026","Valença","g1","Chuvas Intensas","Alagamentos, deslizamentos, quedas de árvores, vias interditadas, granizo",""],
+  ["29/01/2026","Vassouras","g2","Chuvas Intensas","Alagamentos, ruas interditadas, repercussão na mídia",""],
+  ["01/02/2026","Niterói","g1","Chuvas Intensas","queda de galho de árvore causa óbito, alagamentos, repercussão na mídia",""],
+  ["01/02/2026","Paraty","g1","Chuvas Intensas","várias quedas de árvore e falta de energia por várias horas · (queda de árvore sobre veículo causa óbito - entre Angra e Paraty)",""],
+  ["01/02/2026","Piraí","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA DECRETADA PELO PREFEITO · Quedas de árvores causando danos e prejuízos",""],
+  ["01/02/2026","Rio de Janeiro","g1","Chuvas Intensas","Desabamento com vítima fatal, alagamento (1), bolsões (24), quedas de árvores (17), CELL BROADCAST, 2 Sirenes Mobilizadas",""],
+  ["01/02/2026","Santa Maria Madalena","g1","Chuvas Intensas","interdições na RJ 146, falta de energia, 3 deslizamentos, 2 alagamentos (inclusive afetando 9 casas)",""],
+  ["02/02/2026","Cantagalo","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA · Deslizamentos, queda de ponte, vias interditadas, danos em fábrica da VOTORANTIM (POSSÍVEL S.E.)",""],
+  ["02/02/2026","Itaperuna","g3","Alagamento","SITUAÇÃO DE EMERGÊNCIA DECRETADA PELO PREFEITO (em processo) · Alagamentos generalizados. Imóveis atingidos. Vias interditadas. Grande repercussão na mídia local e regional",""],
+  ["02/02/2026","Santa Maria Madalena","g1","Chuvas Intensas","deslizamentos - RJ 146 (e outras vias) com pontos de interdição",""],
+  ["02/02/2026","São Sebastião do Alto","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA DECRETADA PELO PREFEITO · Interdição da RJ 176 entre outros danos",""],
+  ["03/02/2026","Cambuci","g1","Chuvas Intensas","transbordamento com alagamento de imóveis",""],
+  ["03/02/2026","São Gonçalo","g1","Chuvas Intensas","várias quedas de árvores - interdições de vias",""],
+  ["04/02/2026","Nova Iguaçu","g1","Chuvas Intensas","alagamentos - vias interditadas",""],
+  ["04/02/2026","Paty do Alferes","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA DECRETADA PELO PREFEITO · alagamentos - vias interditadas",""],
+  ["04/02/2026","Petrópolis","g1","Chuvas Intensas","CELL BROADCAST, transbordamento",""],
+  ["05/02/2026","Cordeiro","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["05/02/2026","Duas Barras","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["05/02/2026","Duque de Caxias","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["05/02/2026","Itaocara","g2","Chuvas Intensas","alagamentos - vias interditadas",""],
+  ["05/02/2026","Laje do Muriaé","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA",""],
+  ["05/02/2026","Macuco","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["06/02/2026","Porciúncula","g3","Alagamento","SITUAÇÃO DE EMERGÊNCIA DECRETADA PELO PREFEITO · alagamentos - vias interditadas",""],
+  ["06/02/2026","Rio de Janeiro","g1","Chuvas Intensas","Alagamentos, quedas de árvores, vias interditadas",""],
+  ["07/02/2026","Engenheiro Paulo de Frontin","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA - Vias interditadas, Deslizamentos, Alagamentos, imóveis atingidos",""],
+  ["07/02/2026","Rio de Janeiro","g1","Chuvas Intensas","Alagamentos, quedas de árvores, vias interditadas",""],
+  ["07/02/2026","Santo Antônio de Pádua","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["07/02/2026","Sapucaia","g2","Chuvas Intensas","Varias ocorrências variadas ocasionando ALTO IMPACTO - alagamentos, vias interditadas, desalojados, etc",""],
+  ["07/02/2026","Sumidouro","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["08/02/2026","Rio Bonito","g2","Chuvas Intensas","Varias ocorrências variadas ocasionando ALTO IMPACTO - alagamentos, vias interditadas, desalojados, etc",""],
+  ["08/02/2026","Rio das Ostras","g2","Chuvas Intensas","Varias ocorrências variadas ocasionando ALTO IMPACTO - alagamentos, vias interditadas, desalojados, etc",""],
+  ["08/02/2026","Rio de Janeiro","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["08/02/2026","Silva Jardim","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA - Alagamentos, imóveis atingidos",""],
+  ["09/02/2026","Barra Mansa","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA - óbito de menina em desabamento",""],
+  ["09/02/2026","Rio de Janeiro","g2","Chuvas Intensas","Alagamentos, deslizamentos, quedas de árvores, Sirenes Acionadas - ESTÁGIO 3",""],
+  ["11/02/2026","Rio de Janeiro","g1","Chuvas Intensas","Enxurrada na Rocinha e Vidigal (mais de 50mm em 30 minutos)",""],
+  ["18/02/2026","Petrópolis","g1","Chuvas Intensas","Alagamentos, queda de muro / deslizamento, cell broadcast e sirenes","https://www.instagram.com/p/DU6UhWfCQhF/"],
+  ["18/02/2026","Teresópolis","g1","Chuvas Intensas","Alagamentos, queda de telhado, danos em veículos","https://g1.globo.com/rj/regiao-serrana/noticia/2026/02/18/temporal-na-serra-do-rio-telhado-de-estacionamento-desaba-em-teresopolis.ghtml"],
+  ["19/02/2026","Rio de Janeiro","g1","Chuvas Intensas","óbito na Ilha, vários alagamentos e bolsões",""],
+  ["20/02/2026","Angra dos Reis","g1","Chuvas Intensas","Quedas de árvores (interditando BR 101), alagmentos, CELL BROADCAST","https://g1.globo.com/rj/sul-do-rio-costa-verde/noticia/2026/02/21/forte-chuva-e-registrada-em-angra-dos-reis.ghtml"],
+  ["21/02/2026","Duque de Caxias","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["21/02/2026","Mesquita","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/rio-de-janeiro/noticia/2026/02/21/chuva-forte-atinge-o-rj.ghtml"],
+  ["21/02/2026","Nova Iguaçu","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://novaiguacu.rj.gov.br/2026/02/23/nova-iguacu-registra-135-ocorrencias-apos-temporal-e-mantem-alerta-maximo-3/"],
+  ["21/02/2026","Paraty","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA - transbordamento, carro arrastado (óbito)","https://g1.globo.com/rj/sul-do-rio-costa-verde/noticia/2026/02/22/video-chuva-provoca-alagamentos-quedas-de-arvores-e-deslizamentos-em-paraty.ghtml"],
+  ["21/02/2026","Rio das Ostras","g1","Chuvas Intensas","Quedas de árvores, falta de energia",""],
+  ["21/02/2026","Rio de Janeiro","g1","Chuvas Intensas","Sirenes acionadas, vários alagamentos",""],
+  ["21/02/2026","São João de Meriti","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["22/02/2026","Angra dos Reis","g1","Chuvas Intensas","CELL BROADCAST, alagamentos",""],
+  ["22/02/2026","Petrópolis","g1","Chuvas Intensas","CELL BROADCAST, alagamentos","https://www.instagram.com/p/DVEyLaYDjam/"],
+  ["23/02/2026","Angra dos Reis","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc","https://www.instagram.com/p/DVG9grUCW-G/"],
+  ["23/02/2026","Belford Roxo","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["23/02/2026","Duque de Caxias","g1","Chuvas Intensas","CELL BROADCAST, alagamentos, deslizamentos, Sirenes Mobilizadas","https://www.instagram.com/p/DVG-VvtCKJf/"],
+  ["23/02/2026","Itaguaí","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["23/02/2026","Mangaratiba","g2","Chuvas Intensas","enxurrada em Muriqui, alagamentos em Itacuruça, CELL BROADCAST","https://prefeitura.mangaratiba.rj.gov.br/prefeitura-realiza-forca-tarefa-apos-fortes-chuvas-em-mangaratiba/"],
+  ["23/02/2026","Nova Iguaçu","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc",""],
+  ["23/02/2026","Rio de Janeiro","g1","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc","https://g1.globo.com/rj/rio-de-janeiro/noticia/2026/02/23/grande-rio-registra-chuva-forte-e-pontos-de-alagamento.ghtml"],
+  ["23/02/2026","São João de Meriti","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/rio-de-janeiro/noticia/2026/02/23/mulher-morre-afogada-e-124-ficam-desalojados-apos-temporal-em-sao-joao-de-meriti.ghtml"],
+  ["24/02/2026","Resende","g1","Chuvas Intensas","alagamentos, CELL BROADCAST",""],
+  ["24/02/2026","Rio Bonito","g1","Chuvas Intensas","alagamentos, CELL BROADCAST","https://www.instagram.com/p/DVJ1iP2AZHy/"],
+  ["24/02/2026","Três Rios","g1","Chuvas Intensas","alagamentos, FIDE",""],
+  ["24/02/2026","Vassouras","g3","Deslizamentos","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/sul-do-rio-costa-verde/noticia/2026/02/24/video-vassouras-decreta-estado-de-emergencia-apos-chuvas-intensas.ghtml"],
+  ["25/02/2026","Bom Jardim","g1","Chuvas Intensas","alagamentos, CELL BROADCAST",""],
+  ["25/02/2026","Macaé","g2","Chuvas Intensas","alagamentos, CELL BROADCAST","https://www.instagram.com/p/DVJxfCujP6V/"],
+  ["25/02/2026","Resende","g1","Chuvas Intensas","alagamentos, CELL BROADCAST",""],
+  ["26/02/2026","Angra dos Reis","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/rio-de-janeiro/noticia/2026/02/27/angra-dos-reis-chuva.ghtml"],
+  ["26/02/2026","Bom Jardim","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://www.instagram.com/p/DVPm3PcjvOk/"],
+  ["26/02/2026","Bom Jesus do Itabapoana","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA",""],
+  ["26/02/2026","Carapebus","g3","Chuvas Intensas","alagamentos",""],
+  ["26/02/2026","Cardoso Moreira","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA",""],
+  ["26/02/2026","Casimiro de Abreu","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA",""],
+  ["26/02/2026","Conceição de Macabu","g1","Chuvas Intensas","alagamentos",""],
+  ["26/02/2026","Japeri","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA",""],
+  ["26/02/2026","Natividade","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["26/02/2026","Paraty","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/rio-de-janeiro/noticia/2026/02/27/angra-dos-reis-chuva.ghtml"],
+  ["26/02/2026","Rio Bonito","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA",""],
+  ["26/02/2026","Rio das Ostras","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://www.instagram.com/p/DVQgpmVjj8r/"],
+  ["26/02/2026","Rio de Janeiro","g2","Chuvas Intensas","Impactos variados - alagamentos, interdições de vias, etc","https://g1.globo.com/rj/rio-de-janeiro/noticia/2026/02/27/volume-de-chuva-no-rio-em-fevereiro-de-2026.ghtml"],
+  ["26/02/2026","Santo Antônio de Pádua","g3","Inundações","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["26/02/2026","Silva Jardim","g2","Chuvas Intensas","intenção de SE","https://www.instagram.com/reels/DVQ9l9RlcmN/"],
+  ["26/02/2026","Três Rios","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://www.instagram.com/p/DVM5_y1DMfh/"],
+  ["27/02/2026","Aperibé","g3","Inundações","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["27/02/2026","Cambuci","g3","Inundações","SITUAÇÃO DE EMERGÊNCIA - TRANSBORDAMENTO DO RIO POMBA","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["27/02/2026","Campos dos Goytacazes","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA - TRANSBORDAMENTO DO RIO POMBA","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["27/02/2026","Italva","g1","Chuvas Intensas","TRANSBORDAMENTO DO RIO MURIAÉ","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["27/02/2026","Itaperuna","g1","Chuvas Intensas","TRANSBORDAMENTO DO RIO MURIAÉ","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["27/02/2026","Laje do Muriaé","g1","Chuvas Intensas","TRANSBORDAMENTO DO RIO MURIAÉ","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["27/02/2026","Santo Antônio de Pádua","g1","Chuvas Intensas","TRANSBORDAMENTO DO RIO POMBA","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["27/02/2026","São José de Ubá","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA - TRANSBORDAMENTO DO RIO POMBA","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["27/02/2026","Varre-Sai","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA","https://g1.globo.com/rj/norte-fluminense/noticia/2026/02/27/transbordamento-do-rio-pomba-alaga-ruas-em-padua-e-chuvas-causam-prejuizos-no-noroeste-fluminense.ghtml"],
+  ["07/03/2026","Cabo Frio","g1","Chuvas Intensas","ALAGAMENTOS","https://www.instagram.com/p/DVmkBuXEfwd/"],
+  ["07/03/2026","Casimiro de Abreu","g1","Chuvas Intensas","FALTA DE ENERGIA",""],
+  ["07/03/2026","Rio das Ostras","g1","Chuvas Intensas","FALTA DE ENERGIA","https://www.instagram.com/p/DVmkBuXEfwd/"],
+  ["07/03/2026","São Pedro da Aldeia","g1","Chuvas Intensas","ALAGAMENTOS","https://www.instagram.com/p/DVmkBuXEfwd/"],
+  ["08/03/2026","Angra dos Reis","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/reels/DVpUQhnkYNO/"],
+  ["08/03/2026","Mangaratiba","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/reels/DVpUQhnkYNO/"],
+  ["08/03/2026","Teresópolis","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/reel/DVotCxVj49W/"],
+  ["09/03/2026","Cabo Frio","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/lagosinforma/reel/DVq-PKQkRow/"],
+  ["09/03/2026","São Pedro da Aldeia","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/p/DVq10jOkVCa/"],
+  ["13/03/2026","Itaocara","g1","Chuvas Intensas","enxurrada","https://www.instagram.com/p/DV2WDxxjmUB/"],
+  ["13/03/2026","São Fidélis","g3","Chuvas Intensas","SITUAÇÃO DE EMERGÊNCIA - chuvas intensas","https://www.instagram.com/p/DV2azI6jkbG/"],
+  ["20/03/2026","Campos dos Goytacazes","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/p/DWJQO1fgOqi/"],
+  ["20/03/2026","Itaocara","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/reel/DWIBaEMDmhv/"],
+  ["20/03/2026","São Fidélis","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/reels/DWIAwvqDr-X/"],
+  ["23/03/2026","Campos dos Goytacazes","g1","Chuvas Intensas","alagamentos",""],
+  ["23/03/2026","Carapebus","g1","Chuvas Intensas","alagamentos",""],
+  ["23/03/2026","Itaocara","g1","Chuvas Intensas","alagamentos",""],
+  ["23/03/2026","São Fidélis","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/sfnoticias/reel/DWPp4MsjuWc/"],
+  ["25/03/2026","Bom Jesus do Itabapoana","g1","Chuvas Intensas","alagamentos",""],
+  ["31/03/2026","Paraty","g1","Chuvas Intensas","alagamentos",""],
+  ["02/04/2026","Barra Mansa","g2","Chuvas Intensas","alagamentos","https://g1.globo.com/rj/sul-do-rio-costa-verde/noticia/2026/04/02/temporal-causa-alagamentos-e-quedas-de-arvores-em-barra-mansa.ghtml"],
+  ["02/04/2026","Rio de Janeiro","g1","Chuvas Intensas","alagamentos",""],
+  ["02/04/2026","Volta Redonda","g1","Chuvas Intensas","alagamentos",""],
+  ["03/04/2026","Barra Mansa","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/reels/DWrrQH_CPnk/"],
+  ["03/04/2026","Petrópolis","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/p/DWtVgApEt14/"],
+  ["03/04/2026","Volta Redonda","g1","Chuvas Intensas","alagamentos","https://g1.globo.com/rj/sul-do-rio-costa-verde/noticia/2026/04/04/volta-redonda-registra-deslizamentos-e-alagamentos-durante-temporal.ghtml"],
+  ["04/04/2026","Bom Jardim","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/p/DWwpaJthWJs/"],
+  ["04/04/2026","Nova Friburgo","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/p/DWwpaJthWJs/"],
+  ["04/04/2026","Trajano de Moraes","g1","Chuvas Intensas","alagamentos","https://sfnoticias.com.br/2026/04/04/%e2%96%b6%ef%b8%8fvideo-enxurrada-invade-estrada-na-zona-rural-de-trajano-de-moraes/"],
+  ["10/04/2026","Itaocara","g1","Chuvas Intensas","alagamentos","https://www.instagram.com/reel/DW9lXs4jgxg/"],
+  // maio a setembro/2026 (tabela enviada pela equipe)
+  ["20/05/2026","Nova Friburgo","g1","Chuvas Intensas","",""],
+  ["20/05/2026","Petrópolis","g1","Chuvas Intensas","",""],
+  ["15/06/2026","Rio de Janeiro","g1","Chuvas Intensas","",""],
+  ["29/07/2026","Rio de Janeiro","g2","Vendaval","",""],
+  ["29/07/2026","Duque de Caxias","g1","Vendaval","",""],
+  ["29/07/2026","São João de Meriti","g1","Vendaval","",""],
+  ["29/07/2026","Mesquita","g1","Vendaval","",""],
+  ["29/07/2026","Nova Iguaçu","g1","Vendaval","",""],
+  ["29/07/2026","Queimados","g1","Vendaval","",""],
+  ["29/07/2026","Japeri","g1","Vendaval","",""],
+  ["14/08/2026","Macuco","g1","Chuvas","",""],
+  ["31/08/2026","Petrópolis","g1","Chuvas","",""],
+  ["15/09/2026","Petrópolis","g1","Granizo e Vendaval","",""],
+  ["30/09/2026","Barra Mansa","g1","Chuvas Intensas","",""],
+  ["30/09/2026","Teresópolis","g1","Chuvas Intensas","",""]
 ];
 const eventos=()=>[...new Set(ALL.map(r=>r.ev).concat(HIST.map(h=>h[0])))];
 // ---- Links (aba "Links" da planilha): painel específico do dia e matérias, do dia ou de um município ----
@@ -835,7 +1012,9 @@ async function lerLinks(){
   try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=Links`,{cache:"no-store",signal:ctl.signal});
     const t=r.ok?await r.text():"";if(t&&!/^\s*</.test(t))LINKS=parseLinks(t)}catch(e){}finally{clearTimeout(tmo)}
 }
-const linksDo=(ev,mun)=>{const k=dkey(ev);return LINKS.filter(l=>dkey(l.ev)===k&&(mun===undefined||l.mun===mun))};
+const HIST_LINKS=HIST.filter(h=>h[5]).map(h=>({ev:h[0],mun:h[1],tipo:"materia",titulo:"Matéria · "+dominio(h[5]),url:h[5]}));
+const linksDo=(ev,mun)=>{const k=dkey(ev),vistos=new Set();
+  return LINKS.concat(HIST_LINKS).filter(l=>dkey(l.ev)===k&&(mun===undefined||l.mun===mun)&&!vistos.has(l.url)&&vistos.add(l.url))};
 function renderEvLinks(){
   const el=document.getElementById("evLinks");if(!el)return;
   const L=linksDo(EV),pn=L.filter(l=>l.tipo==="painel"),mt=L.filter(l=>l.tipo!=="painel");
@@ -865,7 +1044,7 @@ function compute(){
     o.g=o.n3>=MINCRIT?"g3":o.n2>=MINCRIT?"g2":o.n>=MINCRIT?"g1":"obs";
     const v=(VALS[EV]||{})[o.mun];o.vg=v?v.g:null;
     o.dh=sumT(o.mun,9,[0]);o.db=sumT(o.mun,9,[1]);return o});
-  HIST.filter(h=>h[0]===EV&&!by[h[1]]).forEach(([,mun,g,tipo])=>list.push({mun,hist:tipo,g,vg:null,pts:Array(10).fill(0),mw:Array(10).fill(0),
+  HIST.filter(h=>h[0]===EV&&!by[h[1]]).forEach(([,mun,g,tipo,desc])=>list.push({mun,hist:tipo,histDesc:desc||"",g,vg:null,pts:Array(10).fill(0),mw:Array(10).fill(0),
     rows:Array.from({length:10},()=>[]),lv:Array(10).fill(0),n:0,idx:0,tp:0,n2:0,n3:0,dh:0,db:0}));
   const gr={g3:3,g2:2,g1:1,obs:0};
   return list.sort((a,b)=>gr[b.g]-gr[a.g]||b.idx-a.idx||b.n-a.n||b.tp-a.tp);
@@ -1102,7 +1281,7 @@ function renderDetail(){
   const pos=DATA.indexOf(o)+1,note=EV===EV_BASE?NOTES[o.mun]:"";
   if(o.hist){el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
     <div class="dmeta">${botaoAtualizar(o.mun,true)}<span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span></div></div>
-    <div class="note">Grau informado pela equipe na tabela histórica · evento: ${esc(o.hist)}. Este registro não traz o detalhamento por critério, por isso a Matriz ICR e a Matriz AxR não mostram critérios para ele.</div>${blocoImprensa(o.mun)}`;return}
+    <div class="note">Grau informado pela equipe na tabela histórica · evento: ${esc(o.hist)}.${o.histDesc?" "+esc(o.histDesc)+".":""} Este registro não traz o detalhamento por critério, por isso a Matriz ICR e a Matriz AxR não mostram critérios para ele.</div>${blocoImprensa(o.mun)}`;return}
   el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º mais impactado · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
     <div class="dmeta">${botaoAtualizar(o.mun,false)}<span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span>
     ${o.vg&&o.vg!==o.g?`<span class="chip ghost pub-hide" title="Grau informado na aba Validação da planilha">Validação da equipe: ${GL[o.vg]}</span>`:""}</div></div>
@@ -1259,6 +1438,11 @@ function resumoDias(){
   EV=keep;return S;
 }
 function rotuloDia(s){return `${s.ev}: ${s.g==="obs"?"com ocorrências, abaixo do grau 1":GL[s.g]}; ${s.n} ${s.n>1?"municípios":"município"} (${s.list.map(o=>o.mun).join(", ")}). Abrir o painel deste dia`}
+let CAL_P=null;
+const perIni=t=>{const y=Math.floor(t/12),m=t%12;return m>=10?y*12+10:m<=3?(y-1)*12+10:y*12+4};
+const perNome=p=>{const y=Math.floor(p/12),m=p%12,f=p+5;return (m===10?"Período chuvoso":"Período de estiagem")+` · ${MES_C[m]}/${y} a ${MES_C[f%12]}/${Math.floor(f/12)}`};
+const perCurto=p=>{const a=t=>MES_C[t%12]+"/"+String(Math.floor(t/12)%100).padStart(2,"0");return (p%12===10?"Chuvoso":"Estiagem")+` · ${a(p)}–${a(p+5)}`};
+const CAL_ESTREITO=window.matchMedia?matchMedia("(max-width:600px)"):{matches:false};
 function renderCal(){
   const grid=document.getElementById("calGrid");if(!grid)return;
   esconderCalTip();
@@ -1266,9 +1450,15 @@ function renderCal(){
   const now=new Date(),hk=now.getFullYear()*10000+(now.getMonth()+1)*100+now.getDate(),cur=dkey(EV);
   const ks=Object.keys(CAL_S).map(Number);
   const mk=k=>Math.floor(k/10000)*12+Math.floor(k/100)%100-1;
-  const ini=ks.length?Math.min(...ks.map(mk)):mk(hk),fim=Math.max(mk(hk),...ks.map(mk));
-  let h="";
-  for(let t=ini;t<=fim;t++){
+  const pAtual=perIni(mk(hk)),ps=ks.map(k=>perIni(mk(k))).concat([pAtual]);
+  const pmin=Math.min(...ps),pmax=Math.max(...ps),todos=[];for(let q=pmax;q>=pmin;q-=6)todos.push(q);
+  if(CAL_P===null||!todos.includes(CAL_P))CAL_P=pAtual;
+  const sel=document.getElementById("calPer");
+  const curto=CAL_ESTREITO.matches;
+  sel.innerHTML=todos.map(q=>`<option value="${q}"${q===CAL_P?" selected":""}>${curto?perCurto(q):perNome(q)+(q===pAtual?" (atual)":"")}</option>`).join("");
+  document.getElementById("calPrev").disabled=CAL_P<=pmin;document.getElementById("calNext").disabled=CAL_P>=pmax;
+  let h="",nP=0;
+  for(let t=CAL_P;t<CAL_P+6;t++){
     const y=Math.floor(t/12),m=t%12,first=new Date(y,m,1).getDay(),dias=new Date(y,m+1,0).getDate();
     let cells="",nImp=0;
     for(let i=0;i<first;i++)cells+=`<span class="cd pad" aria-hidden="true"></span>`;
@@ -1279,15 +1469,19 @@ function renderCal(){
         cells+=`<button type="button" class="${cls.join(" ")}" data-k="${k}" aria-label="${esc(rotuloDia(s))}"><b>${d}</b><small>${s.n}<span class="u"> mun.</span></small></button>`}
       else cells+=`<span class="${cls.join(" ")} none"${k===hk?' title="Hoje"':""}><b>${d}</b></span>`;
     }
-    h+=`<section class="calm"><header><h3>${MESES[m]} ${y}</h3><span>${nImp?nImp+(nImp>1?" dias":" dia")+" com impacto":"sem impacto registrado"}</span></header>
+    nP+=nImp;
+    h+=`<section class="calm"><header><h3>${MESES[m]} ${y}</h3><span>${nImp?nImp+(nImp>1?" dias":" dia")+" com impacto":(y*100+m+1>Math.floor(hk/100)?"ainda não começou":"sem impacto registrado")}</span></header>
       <div class="calw" aria-hidden="true"><span>DOM</span><span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SAB</span></div>
       <div class="cald">${cells}</div></section>`;
   }
   grid.innerHTML=h;
-  const yi=Math.floor(ini/12),yf=Math.floor(fim/12);
-  const per=ini===fim?`${MES_C[ini%12]}/${yi}`:`${MES_C[ini%12]}/${yi} a ${MES_C[fim%12]}/${yf}`;
-  document.getElementById("calSub").textContent=`${per} · ${ks.length} ${ks.length===1?"dia":"dias"} com impacto`;
+  document.getElementById("calSub").textContent=`${perNome(CAL_P)}${curto&&CAL_P===pAtual?" (atual)":""} · ${nP} ${nP===1?"dia":"dias"} com impacto`;
 }
+document.getElementById("calPrev").onclick=()=>{CAL_P-=6;renderCal()};
+document.getElementById("calNext").onclick=()=>{CAL_P+=6;renderCal()};
+document.getElementById("calPer").onchange=e=>{CAL_P=+e.target.value;renderCal()};
+{const f=()=>{if(!document.getElementById("vwCal").hidden)renderCal()};
+ if(CAL_ESTREITO.addEventListener)CAL_ESTREITO.addEventListener("change",f);else if(CAL_ESTREITO.addListener)CAL_ESTREITO.addListener(f)}
 function tipCalHTML(s){const max=14;
   return `<div class="tt-h"><b>${esc(s.ev)}</b><span class="chip ${s.g}">${s.g==="obs"?"Abaixo do grau 1":GL[s.g]}</span></div>
   <ul>${s.list.slice(0,max).map(o=>`<li><i style="background:${col(o.g)}"></i><span>${esc(o.mun)}</span><em>${o.g==="obs"?"abaixo do grau 1":GL[o.g]}</em></li>`).join("")}</ul>
