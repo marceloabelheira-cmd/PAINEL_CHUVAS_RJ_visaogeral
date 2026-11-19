@@ -438,6 +438,35 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
 .calnav button:disabled{opacity:.35;cursor:default}
 .calnav select{min-width:0;max-width:100%;font:600 15px var(--f-display);color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
 @media (max-width:600px){.calnav{gap:4px}.calnav button{width:30px}}
+/* ---- Calendário: filtro por município ---- */
+.calctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;max-width:100%}
+.calmun.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.calhead{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}
+.calhead>.cal-leg,.calhead>.calficha{grid-column:1/-1}
+@media (max-width:1100px){.calhead{grid-template-columns:minmax(0,1fr)}.calctl{justify-content:flex-start}}
+.fhead{display:flex;justify-content:space-between;align-items:baseline;gap:6px 16px;flex-wrap:wrap}
+.flimpa{border:0;background:none;color:var(--accent);font:600 13px var(--f-body);cursor:pointer;padding:2px 0;text-decoration:underline;text-underline-offset:3px}
+.flimpa:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.calficha{flex:1 0 100%;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:10px}
+.calficha>p{margin:0;color:var(--muted);font-size:14px}
+.fper{display:grid;grid-template-columns:minmax(0,270px) minmax(0,1fr);gap:6px 14px;align-items:start}
+.fper>span{padding-top:6px;font-size:12px}
+.fdias{display:flex;flex-wrap:wrap;gap:6px}
+.fdia{display:inline-flex;align-items:baseline;gap:6px;border:0;border-radius:6px;padding:5px 9px;font:600 14px/1.1 var(--f-display);letter-spacing:.02em;cursor:pointer}
+.fdia small{font:500 10px var(--f-mono);opacity:.85}
+.fdia.obs{background:var(--obs);color:#0f1b33}
+.fdia.g1{background:var(--g1);color:var(--g1fg)}
+.fdia.g2{background:var(--g2);color:var(--g2fg)}
+.fdia.g3{background:var(--g3);color:var(--g3fg)}
+:root[data-theme="dark"] .fdia.obs{color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .fdia.obs{color:#fff}}
+.fdia:hover{filter:brightness(1.07)}
+.fdia:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.fdia.cur{outline:2px solid var(--fg);outline-offset:2px}
+.caltip li.foco span{font-weight:700}
+.lbl a.munhist{color:inherit;text-decoration:underline dotted;text-underline-offset:3px}
+.lbl a.munhist:hover{color:var(--accent);text-decoration-style:solid}
+@media (max-width:600px){.calctl{justify-content:flex-start;width:100%}.calctl>.calnav{flex:1 1 100%}.calctl select{flex:1 1 auto}.fper{grid-template-columns:minmax(0,1fr)}.fper>span{padding-top:0}}
 </style>
 </head>
 <body>
@@ -592,12 +621,17 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
   </div>
 
   <div id="vwCal" class="axr-wrap" hidden>
-    <section class="panel icr-bar">
+    <section class="panel icr-bar calhead">
       <div><h2 style="font-size:22px">Calendário Situacional de Impactos</h2><span class="lbl" id="calSub"></span></div>
-      <div class="calnav" role="group" aria-label="Período do calendário">
-        <button type="button" id="calPrev" aria-label="Período anterior">‹</button>
-        <select id="calPer" aria-label="Escolher período"></select>
-        <button type="button" id="calNext" aria-label="Próximo período">›</button>
+      <div class="calctl">
+        <div class="calnav calmun" id="calMunBox">
+          <select id="calMun" aria-label="Filtrar o calendário por município"><option value="">Todos os municípios</option></select>
+        </div>
+        <div class="calnav" role="group" aria-label="Período do calendário">
+          <button type="button" id="calPrev" aria-label="Período anterior">‹</button>
+          <select id="calPer" aria-label="Escolher período"></select>
+          <button type="button" id="calNext" aria-label="Próximo período">›</button>
+        </div>
       </div>
       <div class="cal-leg" aria-label="Legenda do calendário">
         <span><i style="background:var(--panel);border:1px solid var(--line)"></i>Sem impacto</span>
@@ -606,9 +640,10 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
         <span><i style="background:var(--g2)"></i>Grau 2</span>
         <span><i style="background:var(--g3)"></i>Grau 3</span>
       </div>
+      <div class="calficha" id="calFicha" hidden></div>
     </section>
     <div class="cal-grid" id="calGrid"></div>
-    <p class="foot" style="text-align:left;margin:0">A cor do dia segue o maior grau entre os municípios. O número abaixo do dia é a quantidade de municípios com ocorrência, em qualquer grau. Clique no dia para abrir o painel daquele evento.</p>
+    <p class="foot" id="calFoot" style="text-align:left;margin:0"></p>
   </div>
   <div class="caltip" id="calTip" role="tooltip" hidden></div>
 
@@ -1277,12 +1312,12 @@ function abrirAxr(c){AXR_HL=c;showTab("axr");setAxrView("op");const el=document.
 function goDetail(m){SEL=m;render();document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"start"})}
 function renderDetail(){
   const el=document.getElementById("detail");const o=DATA.find(x=>x.mun===SEL);
-  if(!o){el.innerHTML=`<div class="dhead"><h3>${esc(SEL)}</h3><div class="dmeta"><span class="chip none">Sem registro</span>${botaoAtualizar(SEL,true)}</div></div><p style="color:var(--muted);margin:0">Nenhuma ocorrência confirmada para este município. Clique em um município do mapa ou do ranking.</p>`;return}
+  if(!o){el.innerHTML=`<div class="dhead"><div><span class="lbl">REDEC ${(RED[SEL]||REDEC[SEL])||"não informada"}${histMunHTML(SEL)}</span><h3>${esc(SEL)}</h3></div><div class="dmeta"><span class="chip none">Sem registro</span>${botaoAtualizar(SEL,true)}</div></div><p style="color:var(--muted);margin:0">Nenhuma ocorrência confirmada para este município. Clique em um município do mapa ou do ranking.</p>`;return}
   const pos=DATA.indexOf(o)+1,note=EV===EV_BASE?NOTES[o.mun]:"";
-  if(o.hist){el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
+  if(o.hist){el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}${histMunHTML(o.mun)}</span><h3>${esc(o.mun)}</h3></div>
     <div class="dmeta">${botaoAtualizar(o.mun,true)}<span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span></div></div>
     <div class="note">Grau informado pela equipe na tabela histórica · evento: ${esc(o.hist)}.${o.histDesc?" "+esc(o.histDesc)+".":""} Este registro não traz o detalhamento por critério, por isso a Matriz ICR e a Matriz AxR não mostram critérios para ele.</div>${blocoImprensa(o.mun)}`;return}
-  el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º mais impactado · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}</span><h3>${esc(o.mun)}</h3></div>
+  el.innerHTML=`<div class="dhead"><div><span class="lbl">${pos}º mais impactado · REDEC ${(RED[o.mun]||REDEC[o.mun])||"não informada"}${histMunHTML(o.mun)}</span><h3>${esc(o.mun)}</h3></div>
     <div class="dmeta">${botaoAtualizar(o.mun,false)}<span class="chip ${o.g}" style="font-size:16px;padding:5px 12px">${GL[o.g]}${GLL[o.g]?" · "+GLL[o.g]:""}</span>
     ${o.vg&&o.vg!==o.g?`<span class="chip ghost pub-hide" title="Grau informado na aba Validação da planilha">Validação da equipe: ${GL[o.vg]}</span>`:""}</div></div>
     <div class="nums"><div><b>${o.idx}/30</b><span>índice de impacto</span></div><div><b>${o.n}</b><span>critérios em nível 1 ou mais</span></div><div><b>${o.n2}</b><span>critérios em nível 2 ou mais</span></div><div><b>${o.n3}</b><span>critérios em nível 3</span></div>
@@ -1296,6 +1331,7 @@ function renderDetail(){
   el.querySelectorAll("button[data-axr]").forEach(b=>b.onclick=()=>abrirAxr(+b.dataset.axr));
 }
 
+document.getElementById("detail").addEventListener("click",e=>{const a=e.target.closest("a.munhist");if(a){e.preventDefault();verMunNoCal(a.dataset.mun)}});
 function renderMatrix(){
   const t=document.getElementById("mtx");
   t.innerHTML=`<tr><th class="mn">Município</th>${CRITS.map(c=>`<th title="${c.n}">${c.n}</th>`).join("")}<th>Índice</th><th>Grau</th></tr>`+
@@ -1434,11 +1470,20 @@ let CAL_S={};
 function resumoDias(){
   const keep=EV,S={};
   eventos().forEach(e=>{const k=dkey(e);if(!k)return;EV=e;const L=compute();
-    if(L.length)S[k]={ev:e,g:L[0].g,n:L.length,hist:[...new Set(L.filter(o=>o.hist).map(o=>o.hist))].join(", "),pn:linksDo(e).some(l=>l.tipo==="painel"),mt:linksDo(e).filter(l=>l.tipo!=="painel").length,list:L.map(o=>({mun:o.mun,g:o.g,idx:o.idx}))}});
+    if(L.length)S[k]={ev:e,g:L[0].g,n:L.length,hist:[...new Set(L.filter(o=>o.hist).map(o=>o.hist))].join(", "),pn:linksDo(e).some(l=>l.tipo==="painel"),mt:linksDo(e).filter(l=>l.tipo!=="painel").length,list:L.map(o=>({mun:o.mun,g:o.g,idx:o.idx,hist:!!o.hist}))}});
   EV=keep;return S;
 }
 function rotuloDia(s){return `${s.ev}: ${s.g==="obs"?"com ocorrências, abaixo do grau 1":GL[s.g]}; ${s.n} ${s.n>1?"municípios":"município"} (${s.list.map(o=>o.mun).join(", ")}). Abrir o painel deste dia`}
-let CAL_P=null;
+let CAL_P=null,CAL_MUN="",CAL_MUN_SIG="";
+let RC={all:null,vals:null,links:null,S:null};
+function resumoCache(){if(!RC.S||RC.all!==ALL||RC.vals!==VALS||RC.links!==LINKS)RC={all:ALL,vals:VALS,links:LINKS,S:resumoDias()};return RC.S}
+const mesIdx=k=>Math.floor(k/10000)*12+Math.floor(k/100)%100-1;
+const dataCurta=k=>`${String(k%100).padStart(2,"0")}/${String(Math.floor(k/100)%100).padStart(2,"0")}/${String(Math.floor(k/10000)%100).padStart(2,"0")}`;
+const desdeTxt=S=>{const ks=Object.keys(S).map(Number);if(!ks.length)return "";const t=mesIdx(Math.min(...ks));return `${MES_C[t%12]}/${Math.floor(t/12)}`};
+const diasDoMun=(S,mun)=>Object.keys(S).map(Number).filter(k=>S[k].list.some(o=>o.mun===mun)).sort((a,b)=>b-a);
+const gMun=(s,mun)=>s.list.find(o=>o.mun===mun);
+const perAno=p=>{const y=Math.floor(p/12);return p%12===10?`Período chuvoso ${y}/${String((y+1)%100).padStart(2,"0")}`:`Período de estiagem ${y}`};
+const gCurto=g=>({g1:"G1",g2:"G2",g3:"G3"}[g]||"");
 const perIni=t=>{const y=Math.floor(t/12),m=t%12;return m>=10?y*12+10:m<=3?(y-1)*12+10:y*12+4};
 const perNome=p=>{const y=Math.floor(p/12),m=p%12,f=p+5;return (m===10?"Período chuvoso":"Período de estiagem")+` · ${MES_C[m]}/${y} a ${MES_C[f%12]}/${Math.floor(f/12)}`};
 const perCurto=p=>{const a=t=>MES_C[t%12]+"/"+String(Math.floor(t/12)%100).padStart(2,"0");return (p%12===10?"Chuvoso":"Estiagem")+` · ${a(p)}–${a(p+5)}`};
@@ -1446,10 +1491,13 @@ const CAL_ESTREITO=window.matchMedia?matchMedia("(max-width:600px)"):{matches:fa
 function renderCal(){
   const grid=document.getElementById("calGrid");if(!grid)return;
   esconderCalTip();
-  CAL_S=resumoDias();
+  CAL_S=resumoDias();RC={all:ALL,vals:VALS,links:LINKS,S:CAL_S};
   const now=new Date(),hk=now.getFullYear()*10000+(now.getMonth()+1)*100+now.getDate(),cur=dkey(EV);
   const ks=Object.keys(CAL_S).map(Number);
-  const mk=k=>Math.floor(k/10000)*12+Math.floor(k/100)%100-1;
+  const mk=mesIdx,mun=CAL_MUN;
+  {const nomes=[...new Set(MUNIS.map(m=>m.n).concat(...ks.map(k=>CAL_S[k].list.map(o=>o.mun))))].sort((a,b)=>a.localeCompare(b,"pt-BR")),sig=nomes.join("|"),ms=document.getElementById("calMun");
+   if(sig!==CAL_MUN_SIG){CAL_MUN_SIG=sig;ms.innerHTML=`<option value="">Todos os municípios</option>`+nomes.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("")}
+   ms.value=mun;document.getElementById("calMunBox").classList.toggle("on",!!mun)}
   const pAtual=perIni(mk(hk)),ps=ks.map(k=>perIni(mk(k))).concat([pAtual]);
   const pmin=Math.min(...ps),pmax=Math.max(...ps),todos=[];for(let q=pmax;q>=pmin;q-=6)todos.push(q);
   if(CAL_P===null||!todos.includes(CAL_P))CAL_P=pAtual;
@@ -1463,10 +1511,11 @@ function renderCal(){
     let cells="",nImp=0;
     for(let i=0;i<first;i++)cells+=`<span class="cd pad" aria-hidden="true"></span>`;
     for(let d=1;d<=dias;d++){
-      const k=y*10000+(m+1)*100+d,s=CAL_S[k],cls=["cd"];
+      const k=y*10000+(m+1)*100+d,s=CAL_S[k],e=s&&mun?gMun(s,mun):s,cls=["cd"];
       if(k===hk)cls.push("hoje");if(k>hk)cls.push("fut");
-      if(s){nImp++;cls.push(s.g);if(k===cur)cls.push("cur");
-        cells+=`<button type="button" class="${cls.join(" ")}" data-k="${k}" aria-label="${esc(rotuloDia(s))}"><b>${d}</b><small>${s.n}<span class="u"> mun.</span></small></button>`}
+      if(e){nImp++;cls.push(e.g);if(k===cur)cls.push("cur");
+        cells+=mun?`<button type="button" class="${cls.join(" ")}" data-k="${k}" aria-label="${esc(rotuloDiaMun(s,e))}"><b>${d}</b>${gCurto(e.g)?`<small>${gCurto(e.g)}</small>`:""}</button>`
+          :`<button type="button" class="${cls.join(" ")}" data-k="${k}" aria-label="${esc(rotuloDia(s))}"><b>${d}</b><small>${s.n}<span class="u"> mun.</span></small></button>`}
       else cells+=`<span class="${cls.join(" ")} none"${k===hk?' title="Hoje"':""}><b>${d}</b></span>`;
     }
     nP+=nImp;
@@ -1475,14 +1524,40 @@ function renderCal(){
       <div class="cald">${cells}</div></section>`;
   }
   grid.innerHTML=h;
-  document.getElementById("calSub").textContent=`${perNome(CAL_P)}${curto&&CAL_P===pAtual?" (atual)":""} · ${nP} ${nP===1?"dia":"dias"} com impacto`;
+  document.getElementById("calSub").textContent=`${mun?mun+" · ":""}${curto?perCurto(CAL_P):perNome(CAL_P)}${curto&&CAL_P===pAtual?" (atual)":""} · ${nP?nP+(nP===1?" dia":" dias"):"nenhum dia"} com impacto`;
+  document.getElementById("calFoot").textContent=mun
+    ?`Mostrando só ${mun}: a cor do dia segue o grau do município naquele dia. Clique no dia, ou numa data da lista acima, para abrir o painel com ${mun} selecionado.`
+    :"A cor do dia segue o maior grau entre os municípios. O número abaixo do dia é a quantidade de municípios com ocorrência, em qualquer grau. Clique no dia para abrir o painel daquele evento.";
+  renderFicha(mun,cur);
 }
+function rotuloDiaMun(s,e){return `${s.ev}: ${e.mun}, ${e.g==="obs"?"com ocorrências, abaixo do grau 1":GL[e.g]}. Abrir o painel deste dia com ${e.mun} selecionado`}
+function renderFicha(mun,cur){
+  const f=document.getElementById("calFicha");if(!mun){f.hidden=true;f.innerHTML="";return}
+  const ks=diasDoMun(CAL_S,mun),desde=desdeTxt(CAL_S);f.hidden=false;
+  const limpa=`<button type="button" class="flimpa">Limpar filtro ×</button>`;
+  if(!ks.length){f.innerHTML=`<div class="fhead"><p style="margin:0;color:var(--muted)">Nenhum dia com impacto registrado em <b>${esc(mun)}</b>${desde?" desde "+desde:""}.</p>${limpa}</div>`;return}
+  const grupos=[];ks.forEach(k=>{const q=perIni(mesIdx(k)),g=grupos.find(x=>x.q===q);g?g.ks.push(k):grupos.push({q,ks:[k]})});
+  f.innerHTML=`<div class="fhead"><span class="lbl">${esc(mun)} · ${ks.length} ${ks.length>1?"dias":"dia"} com impacto desde ${desde}</span>${limpa}</div>`+
+    grupos.map(g=>`<div class="fper"><span class="lbl" title="${perNome(g.q)}">${perAno(g.q)} · ${g.ks.length} ${g.ks.length>1?"dias":"dia"}</span><div class="fdias">${g.ks.map(k=>{const e=gMun(CAL_S[k],mun);
+      return `<button type="button" class="fdia ${e.g}${k===cur?" cur":""}" data-k="${k}" aria-label="${esc(rotuloDiaMun(CAL_S[k],e))}">${dataCurta(k)}${gCurto(e.g)?`<small>${gCurto(e.g)}</small>`:""}</button>`}).join("")}</div></div>`).join("");
+}
+document.getElementById("calFicha").addEventListener("click",e=>{const b=e.target.closest("button.fdia");if(b)abrirDia(+b.dataset.k);
+  if(e.target.closest("button.flimpa")){CAL_MUN="";renderCal();document.getElementById("calMun").focus()}});
+document.getElementById("calMun").onchange=e=>{CAL_MUN=e.target.value;renderCal()};
+function verMunNoCal(mun){CAL_MUN=mun;const k=dkey(EV);if(k)CAL_P=perIni(mesIdx(k));showTab("cal");renderCal();
+  document.getElementById("vwCal").scrollIntoView({behavior:"smooth",block:"start"})}
+function histMunHTML(mun){const S=resumoCache(),desde=desdeTxt(S);if(!desde)return "";const n=diasDoMun(S,mun).length;
+  return n?` · <a href="#" class="munhist" data-mun="${esc(mun)}" title="Ver no Calendário Situacional todos os dias com impacto em ${esc(mun)}">${n} ${n>1?"dias":"dia"} com impacto desde ${desde} ›</a>`:` · nenhum dia com impacto desde ${desde}`}
 document.getElementById("calPrev").onclick=()=>{CAL_P-=6;renderCal()};
 document.getElementById("calNext").onclick=()=>{CAL_P+=6;renderCal()};
 document.getElementById("calPer").onchange=e=>{CAL_P=+e.target.value;renderCal()};
 {const f=()=>{if(!document.getElementById("vwCal").hidden)renderCal()};
  if(CAL_ESTREITO.addEventListener)CAL_ESTREITO.addEventListener("change",f);else if(CAL_ESTREITO.addListener)CAL_ESTREITO.addListener(f)}
-function tipCalHTML(s){const max=14;
+function tipCalHTML(s){const max=14,e=CAL_MUN&&gMun(s,CAL_MUN);
+  if(e){const out=s.n-1,mt=linksDo(s.ev,e.mun).filter(l=>l.tipo!=="painel").length;
+    return `<div class="tt-h"><b>${esc(s.ev)}</b><span class="chip ${e.g}">${GL[e.g]}</span></div>
+    <ul><li class="foco"><i style="background:${col(e.g)}"></i><span>${esc(e.mun)}</span><em>${e.g==="obs"?"abaixo do grau 1":GL[e.g]}</em></li></ul>
+    ${out?`<p>+ ${out} ${out>1?"outros municípios":"outro município"} neste dia · maior grau do dia: ${GL[s.g]}</p>`:""}${e.hist?`<p>Grau informado pela equipe, sem detalhamento por critério</p>`:""}${s.pn||mt?`<p>${[s.pn?"Painel específico deste dia":"",mt?mt+(mt>1?" matérias":" matéria")+" sobre "+esc(e.mun):""].filter(Boolean).join(" · ")}</p>`:""}<p>Clique para abrir o painel com ${esc(e.mun)} selecionado</p>`}
   return `<div class="tt-h"><b>${esc(s.ev)}</b><span class="chip ${s.g}">${s.g==="obs"?"Abaixo do grau 1":GL[s.g]}</span></div>
   <ul>${s.list.slice(0,max).map(o=>`<li><i style="background:${col(o.g)}"></i><span>${esc(o.mun)}</span><em>${o.g==="obs"?"abaixo do grau 1":GL[o.g]}</em></li>`).join("")}</ul>
   ${s.list.length>max?`<p>+ ${s.list.length-max} municípios</p>`:""}${s.hist?`<p>Grau informado pela equipe (${esc(s.hist)}), sem detalhamento por critério</p>`:""}${s.pn||s.mt?`<p>${[s.pn?"Painel específico deste dia":"",s.mt?s.mt+(s.mt>1?" matérias":" matéria"):""].filter(Boolean).join(" · ")}</p>`:""}<p>Clique para abrir o painel deste dia</p>`}
@@ -1493,8 +1568,8 @@ function mostrarCalTip(b){const s=CAL_S[b.dataset.k];if(!s)return;const t=docume
   t.style.left=x+"px";t.style.top=y+"px"}
 function esconderCalTip(){const t=document.getElementById("calTip");if(t)t.hidden=true}
 function abrirDia(k){const s=CAL_S[k];if(!s)return;esconderCalTip();
-  EV=s.ev;DRILL=null;const o=compute()[0];SEL=o?o.mun:SEL;showTab("painel");render();
-  document.getElementById("evTitle").scrollIntoView({behavior:"smooth",block:"start"})}
+  EV=s.ev;DRILL=null;const L=compute(),f=CAL_MUN&&L.find(o=>o.mun===CAL_MUN),o=f||L[0];SEL=o?o.mun:SEL;showTab("painel");render();
+  document.getElementById(f?"detail":"evTitle").scrollIntoView({behavior:"smooth",block:"start"})}
 (function(){const g=document.getElementById("calGrid");
   g.addEventListener("mouseover",e=>{const b=e.target.closest("button.cd");if(b)mostrarCalTip(b)});
   g.addEventListener("mouseout",e=>{const b=e.target.closest("button.cd");if(b&&!b.contains(e.relatedTarget))esconderCalTip()});
