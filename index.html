@@ -71,6 +71,8 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .nrtip .hist{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:grid;gap:2px}
 .nrtip .hist b{font-family:var(--f-mono);font-weight:500;color:var(--fg)}
 .nrtip a.nrup{display:inline-block;margin-top:10px;color:var(--accent);font-weight:600}
+.nrtip .hh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.nrtip a.nrcal{color:var(--accent);font:600 12.5px var(--f-body)}
 .nrtip .h1{font:700 18px var(--f-display);letter-spacing:.04em;color:var(--g3)}
 .nrtip .h2{font:700 16px var(--f-display);letter-spacing:.04em;text-transform:uppercase}
 .nrtip .chg{font:700 20px var(--f-display);margin:4px 0 8px}
@@ -84,8 +86,6 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .event h2{font-size:24px}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .controls{position:relative}
-.histlink{position:absolute;right:2px;top:calc(100% + 1px);font:500 11px var(--f-body,inherit);color:var(--muted);text-decoration:none;white-space:nowrap;opacity:.85}
-.histlink:hover{color:var(--accent);text-decoration:underline;opacity:1}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
 .seg button{border:0;background:transparent;color:var(--fg);font:600 14px var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
@@ -379,11 +379,13 @@ button.cd:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .caltip li em{margin-left:auto;padding-left:10px;font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}
 .caltip p{margin:6px 0 0;color:var(--muted);font-size:12px}
 /* ---- Outros produtos ---- */
-.tabs .prodlink{margin:0 0 0 auto;align-self:center;display:inline-flex;align-items:center;gap:5px;border:0;border-radius:6px;background:transparent;
+.pfoot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 18px;border-top:1px solid var(--line);margin-top:8px;padding:12px 2px 0;font-size:12.5px;color:var(--muted)}
+.pfoot p{margin:0}
+.pfoot .prodlink{display:inline-flex;align-items:center;gap:5px;border:0;border-radius:6px;background:transparent;
   color:var(--muted);font:500 12px var(--f-body);letter-spacing:.01em;padding:4px 6px;cursor:pointer;opacity:.6;white-space:nowrap}
-.tabs .prodlink:hover,.tabs .prodlink:focus-visible{opacity:1;color:var(--accent)}
-.tabs .prodlink[aria-pressed="true"]{opacity:1;color:var(--fg)}
-.tabs .prodlink svg{width:11px;height:11px;flex:none}
+.pfoot .prodlink:hover,.pfoot .prodlink:focus-visible{opacity:1;color:var(--accent)}
+.pfoot .prodlink[aria-pressed="true"]{opacity:1;color:var(--fg)}
+.pfoot .prodlink svg{width:11px;height:11px;flex:none}
 .prod-grp{display:grid;gap:10px}
 .prod-grp h3{display:flex;align-items:center;gap:8px;font:700 14px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:4px 0 0}
 .prod-grp h3 i{width:10px;height:10px;border-radius:3px;background:var(--pc)}
@@ -466,6 +468,18 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
 .caltip li.foco span{font-weight:700}
 .lbl a.munhist{color:inherit;text-decoration:underline dotted;text-underline-offset:3px}
 .lbl a.munhist:hover{color:var(--accent);text-decoration-style:solid}
+/* ---- Calendário dos Níveis de Resposta ---- */
+.nrhead .calnav{justify-self:start}
+.nrhead>.xbtn{justify-self:end;align-self:start}
+@media (max-width:1100px){.nrhead>.xbtn{justify-self:start}}
+.nrhead>.calnav{grid-column:1/-1}
+.cd.nv1{background:var(--nr1);color:#fff}.cd.nv2{background:var(--nr2);color:#2b2200}.cd.nv3{background:var(--nr3);color:#2e1600}.cd.nv4{background:var(--nr4);color:#fff}.cd.nv5{background:var(--nr5);color:#fff}
+.chip.nv1{background:var(--nr1);color:#fff}.chip.nv2{background:var(--nr2);color:#2b2200}.chip.nv3{background:var(--nr3);color:#2e1600}.chip.nv4{background:var(--nr4);color:#fff}.chip.nv5{background:var(--nr5);color:#fff}
+.cd.nvd{cursor:help}
+.calnota{min-height:220px;display:grid;place-content:center;gap:10px;text-align:center;padding:24px 22px;font-size:14px;line-height:1.45}
+.calnota b{font:700 15px var(--f-display);letter-spacing:.04em;text-transform:uppercase}
+.calnota span{color:var(--muted)}
+button.cd.nvd small{font-weight:700}
 @media (max-width:600px){.calctl{justify-content:flex-start;width:100%}.calctl>.calnav{flex:1 1 100%}.calctl select{flex:1 1 auto}.fper{grid-template-columns:minmax(0,1fr)}.fper>span{padding-top:0}}
 </style>
 </head>
@@ -497,7 +511,6 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
     <div class="controls">
       <div class="evbox"><label class="lbl" for="evSel">Evento</label><select id="evSel"></select>
         <button type="button" class="xbtn pub-hide" id="btnAtual" title="Ler a planilha de novo">Atualizar</button></div>
-      <a class="histlink" href="https://marceloabelheira-cmd.github.io/ESCALAv4/" target="_blank" rel="noopener" title="Eventos de nov/25 a set/26">eventos de nov/25 a set/26 ›</a>
       <div class="seg" role="group" aria-label="Versão do painel">
         <button id="vGestor" aria-pressed="true">Gestor</button>
         <button id="vPublico" aria-pressed="false">Público</button>
@@ -511,7 +524,6 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
     <button role="tab" id="tAxr" aria-selected="false">Matriz AxR</button>
     <button role="tab" id="tCal" aria-selected="false">Calendário Situacional</button>
     <button role="tab" id="tForm" class="pub-hide" aria-selected="false">Registrar ocorrência</button>
-    <button type="button" class="prodlink pub-hide" id="tProd" aria-pressed="false" title="Outros produtos: sites, painéis e dashboards"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="0" y="0" width="5" height="5" rx="1" fill="currentColor"/><rect x="7" y="0" width="5" height="5" rx="1" fill="currentColor"/><rect x="0" y="7" width="5" height="5" rx="1" fill="currentColor"/><rect x="7" y="7" width="5" height="5" rx="1" fill="currentColor"/></svg>outros produtos</button>
   </nav>
 
   <div id="vwPainel" style="display:grid;gap:14px">
@@ -647,6 +659,28 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
   </div>
   <div class="caltip" id="calTip" role="tooltip" hidden></div>
 
+  <div id="vwNR" class="axr-wrap" hidden>
+    <section class="panel icr-bar calhead nrhead">
+      <div><h2 style="font-size:22px">Calendário dos Níveis de Resposta</h2><span class="lbl" id="nrcSub"></span></div>
+      <button type="button" class="xbtn" id="nrcVoltar">‹ Voltar ao painel</button>
+      <div class="calnav" role="group" aria-label="Período do calendário">
+        <button type="button" id="nrcPrev" aria-label="Período anterior">‹</button>
+        <select id="nrcPer" aria-label="Escolher período"></select>
+        <button type="button" id="nrcNext" aria-label="Próximo período">›</button>
+      </div>
+      <div class="cal-leg" aria-label="Legenda do calendário">
+        <span><i style="background:var(--nr1)"></i>NR 1</span>
+        <span><i style="background:var(--nr2)"></i>NR 2</span>
+        <span><i style="background:var(--nr3)"></i>NR 3</span>
+        <span><i style="background:var(--nr4)"></i>NR 4</span>
+        <span><i style="background:var(--nr5)"></i>NR 5</span>
+        <span><i style="background:var(--panel);border:1px solid var(--line)"></i>Sem registro</span>
+      </div>
+    </section>
+    <div class="cal-grid" id="nrcGrid"></div>
+    <p class="foot" style="text-align:left;margin:0">A cor do dia é o Nível de Resposta em vigor. No dia em que o nível muda, vale o mais alto do dia, e a seta indica a mudança (↑ elevação, ↓ regressão). Passe o mouse ou toque no dia para ver os detalhes.</p>
+  </div>
+
   <div id="vwProd" class="axr-wrap" hidden>
     <section class="panel icr-bar">
       <div><h2 style="font-size:22px">Sites, painéis e dashboards</h2><span class="lbl">14 produtos · abrem em nova aba</span></div>
@@ -686,7 +720,12 @@ a.prod-fe .go{margin-left:auto;flex:none;font:700 14px var(--f-display);letter-s
       <div class="panel-h"><h2>Aguardando confirmação</h2><span class="lbl" id="regN"></span></div>
       <div class="reglist" id="regList"></div>
     </section>
-Fontes: COMDECs, REDECs e SEDEC-RJ · Limites municipais: IBGE · Classificação segundo a Matriz ICR (Identificação, Classificação e Registro)</p>
+  </div>
+
+  <footer class="pfoot">
+    <p>Fontes: COMDECs, REDECs e SEDEC-RJ · Limites municipais: IBGE · Classificação segundo a Matriz ICR (Identificação, Classificação e Registro)</p>
+    <button type="button" class="prodlink pub-hide" id="tProd" aria-pressed="false" title="Outros produtos: sites, painéis e dashboards"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="0" y="0" width="5" height="5" rx="1" fill="currentColor"/><rect x="7" y="0" width="5" height="5" rx="1" fill="currentColor"/><rect x="0" y="7" width="5" height="5" rx="1" fill="currentColor"/><rect x="7" y="7" width="5" height="5" rx="1" fill="currentColor"/></svg>outros produtos</button>
+  </footer>
 </div>
 
 <script>
@@ -1094,8 +1133,23 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const NRC=["--nr1","--nr2","--nr3","--nr4","--nr5"];
 const NR_EMB=[{"dt": "03/10/2026 18:17", "nr": 2, "msg": "🛑 ATENÇÃO!\n\nMUDANÇA DE NÍVEL – RESPOSTA DA SEDEC\n\n🟢 NR 1 ➡️ 🟡 NR 2\n\nBoa noite!\n\nApós análise dos indicadores disponíveis, verifica-se que os níveis de monitoramento Meteorológico, Hidrológico e de Deslizamentos apresentam, predominantemente, condições ALTAS e MUITO ALTAS.\n\nConsiderando também as ocorrências relacionadas às chuvas registradas no SISGEO e informadas pelas Regionais de Proteção e Defesa Civil, bem como a necessidade de apoio pontual do GRAC, fica deliberada, conforme o PLANCON 2025/2026 – Chuvas Intensas, a evolução do Nível de Resposta 1 (NR 1) para o NR 2.", "fonte": "Grupo Info - Risco - Desastre - SEDEC RJ"}, {"dt": "12/10/2026 15:36", "nr": 1, "msg": "🛑 ATENÇÃO!\n\nMUDANÇA DE NÍVEL DE RESPOSTA DA SEDEC/RJ\n\n🟡 NR 2 ➡️ 🟢 NR 1\n\nApós análise dos indicadores disponíveis, verifica-se que os níveis de monitoramento Meteorológico, Hidrológico e de Deslizamentos apresentam, predominantemente, condições MUITO BAIXAS e BAIXAS.\n\nConsiderando também o retorno da normalidade das ocorrências relacionadas às chuvas no SISGEO, e a sinalização, pelas Regionais de Proteção e Defesa Civil - REDECs, do estabelecimento dos serviços essenciais, fica deliberado, conforme o PLANCON 2025/2026 – Chuvas Intensas, a REGRESSÃO do Nível de Resposta 2 (NR 2) para o NR 1.", "fonte": "Grupo Info - Risco - Desastres - SEDEC-RJ"}];
 let NRL=NR_EMB.slice(),NR_KEY="",NR_PIN=false;
+// Histórico informado pela equipe (calendário e tabela "Histórico de alteração no Nível de Resposta", período chuvoso 2025/26).
+// Sem horário: a mudança vale a partir do dia. De 05/03/2026 a 02/10/2026 ficou em NR 1.
+const NR_HIST=[
+  {dt:"01/12/2025",nr:1,base:true},
+  {dt:"17/12/2025",nr:2},{dt:"18/12/2025",nr:1},
+  {dt:"15/01/2026",nr:2},{dt:"16/01/2026",nr:3,obs:"S.E. – Rio Claro"},{dt:"19/01/2026",nr:2},{dt:"21/01/2026",nr:1},
+  {dt:"23/01/2026",nr:2},{dt:"29/01/2026",nr:1},
+  {dt:"01/02/2026",nr:2},{dt:"04/02/2026",nr:3,obs:"GRAC atuando"},{dt:"13/02/2026",nr:2},{dt:"15/02/2026",nr:1},
+  {dt:"21/02/2026",nr:2},{dt:"21/02/2026",nr:3},
+  {dt:"03/03/2026",nr:2},{dt:"05/03/2026",nr:1}];
+// Meses com observação no lugar das cores
+const NR_NOTAS={202511:{lado:"NR 2 · ressaca",txt:"Havia NR 2 devido à S.E. de ressaca em Paraty",sub:"não relacionado às Chuvas Intensas"}};
+// Planilha + histórico embutido (um registro embutido sai se a planilha já tiver o mesmo dia e nível)
+function nrTodos(){const dia=r=>Math.floor(dhKey(r.dt)/10000),tem=new Set(NRL.map(r=>dia(r)+"|"+(+r.nr)));
+  return NR_HIST.filter(r=>!tem.has(dia(r)+"|"+r.nr)).concat(NRL)}
 function renderNR(){
-  const L=NRL.slice().sort((a,b)=>dhKey(a.dt)-dhKey(b.dt));const cur=L[L.length-1];if(!cur)return;
+  const L=nrTodos().map((r,i)=>({r,i})).sort((a,b)=>dhKey(a.r.dt)-dhKey(b.r.dt)||a.i-b.i).map(x=>x.r);const cur=L[L.length-1];if(!cur)return;
   const key=JSON.stringify(L)+"|"+(FM_NR()||"");if(key===NR_KEY)return;NR_KEY=key;
   const n=cur.nr,now=document.getElementById("nrNow");
   now.textContent="NR "+n;now.style.color=`var(${NRC[n-1]})`;
@@ -1110,7 +1164,8 @@ function renderNR(){
   const hist=L.slice().reverse().slice(0,6);
   const u=FM_NR();
   t.innerHTML=`<div class="meta"><b>${esc(cur.dt)}</b><span>${esc(cur.fonte||"")}</span></div><div class="msg">${msg}</div>
-    ${hist.length>1?`<div class="hist"><span class="lbl">Histórico</span>${hist.map(h=>`<span><b>${esc(h.dt)}</b> · NR ${h.nr}</span>`).join("")}</div>`:""}
+    ${hist.length>1?`<div class="hist"><span class="hh"><span class="lbl">Histórico</span><a href="#" class="nrcal">Ver em calendário ›</a></span>${hist.map(h=>`<span><b>${esc(h.dt)}</b> · NR ${h.nr}${h.obs?" ("+esc(h.obs)+")":""}</span>`).join("")}</div>`
+      :`<div class="hist"><span class="hh"><span></span><a href="#" class="nrcal">Ver em calendário ›</a></span></div>`}
     ${u?`<a class="nrup pub-hide" href="${esc(u)}" target="_blank" rel="noopener">Registrar mudança de NR ›</a>`:""}`;
 }
 const FORM_PUB="https://docs.google.com/forms/d/e/1FAIpQLSdQb8NFgRyqBE-ZtQzHhEDb1kH5ca-S_y2gMScDwi4gU_EmQA/viewform", FORM_NR_PUB="https://docs.google.com/forms/d/e/1FAIpQLSf_Ko9UA93y2hZx4lvA441X7MpbbEyoeG1IShSzqZMkZpOF4Q/viewform";
@@ -1118,8 +1173,12 @@ function FM_NR(){try{return /^https?:/.test(FM["__form_nr__"]||"")?FM["__form_nr
 (function(){const box=document.getElementById("nrsteps"),t=document.getElementById("nrtip");
   const btn=()=>document.getElementById("nrBtn");
   const show=v=>{t.hidden=!v;const b=btn();if(b)b.setAttribute("aria-expanded",v)};
-  box.addEventListener("mouseover",e=>{if(e.target.id==="nrBtn")show(true)});
-  box.addEventListener("mouseout",e=>{if(e.target.id==="nrBtn"&&!NR_PIN)show(false)});
+  let hideT=null;const hideLater=()=>{clearTimeout(hideT);hideT=setTimeout(()=>{if(!NR_PIN)show(false)},300)};
+  box.addEventListener("mouseover",e=>{if(e.target.id==="nrBtn"){clearTimeout(hideT);show(true)}});
+  box.addEventListener("mouseout",e=>{if(e.target.id==="nrBtn"&&!NR_PIN)hideLater()});
+  t.addEventListener("mouseenter",()=>clearTimeout(hideT));
+  t.addEventListener("mouseleave",()=>{if(!NR_PIN)hideLater()});
+  t.addEventListener("click",e=>{const a=e.target.closest("a.nrcal");if(a){e.preventDefault();NR_PIN=false;show(false);abrirCalNR()}});
   box.addEventListener("focusin",e=>{if(e.target.id==="nrBtn")show(true)});
   box.addEventListener("focusout",e=>{if(e.target.id==="nrBtn"&&!NR_PIN)show(false)});
   box.addEventListener("click",e=>{if(e.target.id==="nrBtn"){e.stopPropagation();NR_PIN=!NR_PIN;show(NR_PIN)}});
@@ -1140,6 +1199,7 @@ MUNIS.forEach(m=>{const p=document.createElementNS(NS,"path");p.setAttribute("d"
 
 function render(){
   if(!document.getElementById("vwCal").hidden)renderCal();
+  if(!document.getElementById("vwNR").hidden)renderNRCal();
   DATA=compute();document.body.classList.toggle("public",PUBLIC);renderNR();
   document.getElementById("evTitle").textContent="Evento de "+EV;renderEvLinks();
   document.getElementById("evSub").innerHTML=`<span class="srcdot ${SRC==="planilha"?"on":SRCMSG.startsWith("Conectando")?"":"err"}"></span>`+esc(SRC==="planilha"?`Planilha Google · lida às ${LIDO} · atualiza a cada minuto`:SRCMSG);
@@ -1551,8 +1611,75 @@ function histMunHTML(mun){const S=resumoCache(),desde=desdeTxt(S);if(!desde)retu
 document.getElementById("calPrev").onclick=()=>{CAL_P-=6;renderCal()};
 document.getElementById("calNext").onclick=()=>{CAL_P+=6;renderCal()};
 document.getElementById("calPer").onchange=e=>{CAL_P=+e.target.value;renderCal()};
-{const f=()=>{if(!document.getElementById("vwCal").hidden)renderCal()};
+{const f=()=>{if(!document.getElementById("vwCal").hidden)renderCal();if(!document.getElementById("vwNR").hidden)renderNRCal()};
  if(CAL_ESTREITO.addEventListener)CAL_ESTREITO.addEventListener("change",f);else if(CAL_ESTREITO.addListener)CAL_ESTREITO.addListener(f)}
+// ---- Calendário dos Níveis de Resposta (registros da aba "Nível de Resposta") ----
+let NRC_P=null;
+const nrSerie=()=>nrTodos().map((r,i)=>({k:dhKey(r.dt),nr:+r.nr,dt:String(r.dt||""),obs:r.obs||"",base:!!r.base,i})).filter(r=>r.k&&r.nr>=1&&r.nr<=5).sort((a,b)=>a.k-b.k||a.i-b.i);
+function nrDia(S,k){const ini=k*10000,fim=ini+2359;let antes=null;for(const r of S){if(r.k<ini||(r.base&&r.k<=fim))antes=r;else break}
+  const mud=S.filter(r=>r.k>=ini&&r.k<=fim&&!r.base),nv=(antes?[antes.nr]:[]).concat(mud.map(r=>r.nr));
+  return nv.length?{max:Math.max(...nv),ini:antes?antes.nr:null,mud,desde:antes}:null}
+const dataLonga=k=>`${String(k%100).padStart(2,"0")}/${String(Math.floor(k/100)%100).padStart(2,"0")}/${Math.floor(k/10000)}`;
+function nrSeta(x){const u=x.mud[x.mud.length-1];if(!u)return "";const a=x.mud.length>1?x.mud[x.mud.length-2].nr:x.ini;return (a==null?"":u.nr>a?"↑":u.nr<a?"↓":"")+"NR"+u.nr}
+const nrHora=r=>(r.dt.split(/\s+/)[1]||"");
+function rotuloNR(k,x){return `${dataLonga(k)}: NR ${x.max}`+(x.mud.length?`, ${x.mud.map(r=>"mudou para NR "+r.nr+(nrHora(r)?" às "+nrHora(r):"")+(r.obs?" ("+r.obs+")":"")).join(", ")}`:"")}
+function tipNRHTML(k){const x=nrDia(nrSerie(),k);if(!x)return "";
+  return `<div class="tt-h"><b>${dataLonga(k)}</b><span class="chip nv${x.max}">NR ${x.max}</span></div>`+
+    (x.mud.length?`<ul>${x.ini!=null?`<li><i style="background:var(--nr${x.ini})"></i><span>Início do dia</span><em>NR ${x.ini}</em></li>`:""}${x.mud.map((r,i)=>{const a=i?x.mud[i-1].nr:x.ini;
+      const tp=a==null?"primeiro registro":r.nr>a?"elevação":r.nr<a?"regressão":"mantido";
+      return `<li><i style="background:var(--nr${r.nr})"></i><span>${nrHora(r)?esc(nrHora(r))+" · "+tp:tp.charAt(0).toUpperCase()+tp.slice(1)}${r.obs?" · "+esc(r.obs):""}</span><em>NR ${r.nr}</em></li>`}).join("")}</ul>`
+    :`<p style="margin:0">Em vigor desde ${esc(x.desde.dt)}</p>`)}
+function renderNRCal(){
+  const grid=document.getElementById("nrcGrid");if(!grid)return;esconderCalTip();
+  const S=nrSerie(),now=new Date(),hk=now.getFullYear()*10000+(now.getMonth()+1)*100+now.getDate(),pAtual=perIni(mesIdx(hk));
+  const notas=Object.keys(NR_NOTAS).map(Number),ini0=[...(S.length?[mesIdx(Math.floor(S[0].k/10000))]:[]),...notas.map(a=>Math.floor(a/100)*12+a%100-1)];
+  const pmin=ini0.length?Math.min(perIni(Math.min(...ini0)),pAtual):pAtual,todos=[];for(let q=pAtual;q>=pmin;q-=6)todos.push(q);
+  if(NRC_P===null||!todos.includes(NRC_P))NRC_P=pAtual;
+  const curto=CAL_ESTREITO.matches;
+  document.getElementById("nrcPer").innerHTML=todos.map(q=>`<option value="${q}"${q===NRC_P?" selected":""}>${curto?perCurto(q):perNome(q)+(q===pAtual?" (atual)":"")}</option>`).join("");
+  document.getElementById("nrcPrev").disabled=NRC_P<=pmin;document.getElementById("nrcNext").disabled=NRC_P>=pAtual;
+  const cont={};let h="";
+  for(let t=NRC_P;t<NRC_P+6;t++){
+    const y=Math.floor(t/12),m=t%12,first=new Date(y,m,1).getDay(),dias=new Date(y,m+1,0).getDate(),mesAtual=y*100+m+1===Math.floor(hk/100);
+    let cells="",nMud=0,reg=0;const niv=new Set(),nota=NR_NOTAS[y*100+m+1];
+    if(nota){h+=`<section class="calm"><header><h3>${MESES[m]} ${y}</h3><span>${esc(nota.lado)}</span></header>
+      <div class="calnota"><b>${esc(nota.txt)}</b>${nota.sub?`<span>(${esc(nota.sub)})</span>`:""}</div></section>`;continue}
+    for(let i=0;i<first;i++)cells+=`<span class="cd pad" aria-hidden="true"></span>`;
+    for(let d=1;d<=dias;d++){
+      const k=y*10000+(m+1)*100+d,cls=["cd"];if(k===hk)cls.push("hoje");
+      const x=k<=hk?nrDia(S,k):null;
+      if(!x){if(k>hk)cls.push("fut");cls.push("none");cells+=`<span class="${cls.join(" ")}"><b>${d}</b></span>`;continue}
+      reg++;cont[x.max]=(cont[x.max]||0)+1;niv.add(x.max);nMud+=x.mud.length;cls.push("nvd","nv"+x.max);
+      cells+=x.mud.length?`<button type="button" class="${cls.join(" ")}" data-nk="${k}" aria-label="${esc(rotuloNR(k,x))}"><b>${d}</b><small>${nrSeta(x)}</small></button>`
+        :`<span class="${cls.join(" ")}" data-nk="${k}"><b>${d}</b></span>`;
+    }
+    const lado=y*100+m+1>Math.floor(hk/100)?"ainda não começou":!reg?"sem registro":nMud?`${nMud} ${nMud>1?"mudanças":"mudança"} de nível`:`NR ${[...niv][0]} ${mesAtual?"até hoje":"o mês todo"}`;
+    h+=`<section class="calm"><header><h3>${MESES[m]} ${y}</h3><span>${lado}</span></header>
+      <div class="calw" aria-hidden="true"><span>DOM</span><span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SAB</span></div>
+      <div class="cald">${cells}</div></section>`;
+  }
+  grid.innerHTML=h;
+  const resumo=Object.keys(cont).map(Number).sort((a,b)=>b-a).map(n=>`${cont[n]} ${cont[n]>1?"dias":"dia"} em NR ${n}`).join(" · ");
+  document.getElementById("nrcSub").textContent=`${curto?perCurto(NRC_P):perNome(NRC_P)}${curto&&NRC_P===pAtual?" (atual)":""} · ${resumo||"sem registro de nível de resposta"}`;
+}
+function abrirCalNR(){NRC_P=null;showTab("nrcal");renderNRCal();scrollTo({top:0,behavior:"smooth"})}
+function mostrarNRTip(b){const t=document.getElementById("calTip"),html=tipNRHTML(+b.dataset.nk);if(!html)return;t.innerHTML=html;t.hidden=false;
+  const r=b.getBoundingClientRect(),w=t.offsetWidth,hh=t.offsetHeight;
+  const x=Math.max(8,Math.min(r.left+r.width/2-w/2,innerWidth-w-8));let y=r.top-hh-8;if(y<8)y=r.bottom+8;
+  t.style.left=x+"px";t.style.top=y+"px"}
+(function(){const g=document.getElementById("nrcGrid");let toque=false;
+  addEventListener("pointerdown",e=>{toque=e.pointerType!=="mouse"},{capture:true,passive:true});
+  addEventListener("pointermove",e=>{if(e.pointerType==="mouse")toque=false},{passive:true});
+  g.addEventListener("mouseover",e=>{const b=e.target.closest("[data-nk]");if(b)mostrarNRTip(b)});
+  g.addEventListener("mouseout",e=>{if(toque)return;const b=e.target.closest("[data-nk]");if(b&&!b.contains(e.relatedTarget))esconderCalTip()});
+  g.addEventListener("focusin",e=>{const b=e.target.closest("[data-nk]");if(b)mostrarNRTip(b)});
+  g.addEventListener("focusout",esconderCalTip);
+  g.addEventListener("click",e=>{const b=e.target.closest("[data-nk]");if(b){e.stopPropagation();mostrarNRTip(b)}});
+  document.getElementById("nrcPrev").onclick=()=>{NRC_P-=6;renderNRCal()};
+  document.getElementById("nrcNext").onclick=()=>{NRC_P+=6;renderNRCal()};
+  document.getElementById("nrcPer").onchange=e=>{NRC_P=+e.target.value;renderNRCal()};
+  document.getElementById("nrcVoltar").onclick=()=>showTab("painel");
+  document.addEventListener("click",e=>{if(!document.getElementById("vwNR").hidden&&!e.target.closest("#nrcGrid"))esconderCalTip()});})();
 function tipCalHTML(s){const max=14,e=CAL_MUN&&gMun(s,CAL_MUN);
   if(e){const out=s.n-1,mt=linksDo(s.ev,e.mun).filter(l=>l.tipo!=="painel").length;
     return `<div class="tt-h"><b>${esc(s.ev)}</b><span class="chip ${e.g}">${GL[e.g]}</span></div>
@@ -1585,7 +1712,7 @@ vp.onclick=()=>{PUBLIC=true;setPressed(vp,vg);if(!document.getElementById("vwFor
 document.getElementById("btnAtual").onclick=()=>lerPlanilha(true);
 const tPr=document.getElementById("tProd"),tP=document.getElementById("tPainel"),tF=document.getElementById("tForm"),tA=document.getElementById("tAxr"),tI=document.getElementById("tIcr"),tC=document.getElementById("tCal");
 function showTab(t){document.getElementById("vwPainel").style.display=t==="painel"?"grid":"none";document.getElementById("vwForm").hidden=t!=="form";
-  document.getElementById("vwAxr").hidden=t!=="axr";document.getElementById("vwIcr").hidden=t!=="icr";document.getElementById("vwCal").hidden=t!=="cal";document.getElementById("vwProd").hidden=t!=="prod";tPr.setAttribute("aria-pressed",t==="prod");if(t!=="cal")esconderCalTip();
+  document.getElementById("vwAxr").hidden=t!=="axr";document.getElementById("vwIcr").hidden=t!=="icr";document.getElementById("vwCal").hidden=t!=="cal";document.getElementById("vwProd").hidden=t!=="prod";document.getElementById("vwNR").hidden=t!=="nrcal";tPr.setAttribute("aria-pressed",t==="prod");esconderCalTip();
   tC.setAttribute("aria-selected",t==="cal");
   tP.setAttribute("aria-selected",t==="painel");tF.setAttribute("aria-selected",t==="form");tA.setAttribute("aria-selected",t==="axr");tI.setAttribute("aria-selected",t==="icr")}
 tP.onclick=()=>showTab("painel");
